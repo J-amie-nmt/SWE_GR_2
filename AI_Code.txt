@@ -1,0 +1,13 @@
+Purpose: Keep track of generated code, with semi-indepth explaination of said code
+
+Format Example:
+----------------
+Lines 1 - 10
+*Copy of Code*
+
+Explaination:
+*Code explained.*
+---------------
+
+Start
+--------------------------------------------
