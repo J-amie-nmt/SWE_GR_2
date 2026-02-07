@@ -1,0 +1,9 @@
+export default function Home() {
+  return (
+    <main style={{ padding: 40 }}>
+      <h1>🍳 Recipe Search</h1>
+      <p> Super cool black website something </p>
+    </main>
+  )
+}
+
