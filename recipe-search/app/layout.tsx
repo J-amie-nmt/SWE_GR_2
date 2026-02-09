@@ -5,7 +5,6 @@ export const metadata = {
   title: "Recipe Search",
   description: "Find and save recipes from anywhere",
 }
-
 export default function RootLayout({
   children,
 }: {
