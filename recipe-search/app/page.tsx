@@ -3,9 +3,10 @@ import Image from "next/image"
 export default function Home() {
   return (
     <main style={{ padding: 20 }}>
-      <h1>🍳 Recipe Search</h1>
-      <p>Super cool cooking website</p>
-	<div className="g-signin2" data-onsuccess="onSignIn"></div>
+    <button className="px-15 py-4 bg-green-500 text-white rounded-lg"/>
+      <h1>🍳Shins Cookbook</h1>
+      <p>Welcome to the recipe search website!</p>
+      <p>On this website you can search for specific recipes based on origin of food, rating of food, ingredient information, and many other specific flags you can search based on.</p>
       <Image
         src="/Ramsey.jpg"
         alt="Gordon Ramsey"

@@ -3,7 +3,7 @@ import Nav from "./components/Nav"
 import { Providers } from './providers'
 
 export const metadata = {
-  title: "Recipe Search",
+  title: "Shins Cookbook",
   description: "Find and save recipes from anywhere",
 }
 
@@ -26,7 +26,7 @@ export default function RootLayout({
             borderTop: "1px solid #ddd",
             marginTop: "2rem"
           }}>
-            © {new Date().getFullYear()} Recipe Search
+            © {new Date().getFullYear()} Shins Cookbook
           </footer>
         </Providers>
       </body>
