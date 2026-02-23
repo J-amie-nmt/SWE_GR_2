@@ -22,7 +22,53 @@ import os
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Generic search URL patterns
+#
+# For each site we try both common search URL formats.
+# No per-site config needed — adding a domain to website-recipe-list.txt
+# is all that's required to support a new site.
+# ---------------------------------------------------------------------------
+
+SEARCH_URL_PATTERNS = [
+    "https://www.{domain}/search?q={query}",
+    "https://www.{domain}/search/{query}",
+]
+
+# Generic heuristic: hrefs that look like recipe content pages.
+# Avoids navigation, search, tag, author, and other non-recipe pages.
+RECIPE_PATH_SIGNALS = ["/recipe/", "/recipes/"]
+NON_RECIPE_PATTERNS = [
+    "/search", "/tag/", "/tags/", "/author/", "/category/",
+    "/collections/", "/gallery/", "/how-to/", "/article/",
+    "/news/", "/video/", "/podcast/", "/shop/", "/review/",
+]
+
+def _is_recipe_link(href: str, domain: str) -> bool:
+    """
+    Return True if `href` looks like a recipe page on `domain`.
+    Checks that:
+      1. The URL belongs to the expected domain.
+      2. The path contains a known recipe signal (/recipe/ or /recipes/).
+      3. The path does not match non-recipe patterns.
+      4. The slug is reasonably long (avoids bare /recipes/ index pages).
+    """
+    if domain not in href:
+        return False
+    parsed_path = urlparse(href).path.rstrip("/")
+    if not any(signal in parsed_path for signal in RECIPE_PATH_SIGNALS):
+        return False
+    if any(bad in parsed_path for bad in NON_RECIPE_PATTERNS):
+        return False
+    # Must have meaningful content after the /recipe(s)/ segment
+    parts = [p for p in parsed_path.split("/") if p]
+    recipe_idx = next((i for i, p in enumerate(parts) if p in ("recipe", "recipes")), None)
+    if recipe_idx is None or recipe_idx >= len(parts) - 1:
+        return False
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Site list loader
 # ---------------------------------------------------------------------------
 
 DEFAULT_SITES_FILE = "website-recipe-list.txt"
@@ -48,7 +94,7 @@ def load_recipe_sites(filepath: str = DEFAULT_SITES_FILE) -> List[str]:
     Lines starting with '#' are treated as comments and ignored.
     """
     if not os.path.exists(filepath):
-        print(f"'{filepath}' not found, using built-in site list.")
+        print(f"ℹ️  '{filepath}' not found — using built-in site list.")
         return DEFAULT_RECIPE_SITES
 
     sites = []
@@ -59,10 +105,10 @@ def load_recipe_sites(filepath: str = DEFAULT_SITES_FILE) -> List[str]:
                 sites.append(line)
 
     if not sites:
-        print(f"'{filepath}' is empty, using built-in site list.")
+        print(f"⚠️  No usable sites in '{filepath}' — using built-in site list.")
         return DEFAULT_RECIPE_SITES
 
-    print(f"Loaded {len(sites)} sites from '{filepath}'")
+    print(f"✓ Loaded {len(sites)} sites from '{filepath}'")
     return sites
 
 
@@ -90,9 +136,9 @@ CREATE TABLE IF NOT EXISTS recipes (
 );
 
 CREATE TABLE IF NOT EXISTS search_log (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    query        TEXT    NOT NULL,
-    searched_at  TEXT    NOT NULL,
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    query         TEXT    NOT NULL,
+    searched_at   TEXT    NOT NULL,
     results_found INTEGER
 );
 """
@@ -107,10 +153,7 @@ def get_db_connection(db_path: str = "recipes.db") -> sqlite3.Connection:
 
 
 def save_recipes_to_db(recipes: List[Dict], query: str, db_path: str = "recipes.db") -> int:
-    """
-    Upsert recipes into the database.
-    Returns the number of rows actually inserted/updated.
-    """
+    """Upsert recipes into the database. Returns the number of rows inserted/updated."""
     if not recipes:
         print("⚠️  No recipes to save!")
         return 0
@@ -161,34 +204,36 @@ def save_recipes_to_db(recipes: List[Dict], query: str, db_path: str = "recipes.
     return saved
 
 
+
 # ---------------------------------------------------------------------------
 # Scraper
 # ---------------------------------------------------------------------------
 
 class RecipeSearchScraper:
-    """Search for recipes across many sites using a generalized approach, then scrape them."""
+    """Search for recipes using each site's own search URL, then scrape them."""
 
-    def __init__(self, sites_file: str = DEFAULT_SITES_FILE):
+    def __init__(self, sites_file: str = DEFAULT_SITES_FILE, db_path: str = "recipes.db"):
         self.recipe_sites = load_recipe_sites(sites_file)
-
+        self.db_path = db_path
         self.headers = {
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/91.0.4472.124 Safari/537.36"
-            )
+                "Chrome/122.0.0.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
         }
 
     # ------------------------------------------------------------------
-    # Generalised search
+    # Search
     # ------------------------------------------------------------------
 
     def search_recipe_sites_directly(self, query: str, num_results: int = 20) -> List[str]:
         """
-        Generalised search: for every site in self.recipe_sites, issue a
-        DuckDuckGo HTML search scoped to that domain and collect recipe URLs.
-        This replaces the old per-site hard-coded scrapers and scales
-        automatically as new domains are added to the sites file.
+        For every site in self.recipe_sites, fetch that site's own search results
+        page and extract recipe links using the site-specific link_filter.
+        No third-party search engine involved — zero rate-limit risk.
         """
         print(f"\n🔍 Searching {len(self.recipe_sites)} recipe sites for: '{query}'")
 
@@ -196,62 +241,69 @@ class RecipeSearchScraper:
         per_site = max(2, num_results // len(self.recipe_sites))
 
         for site in self.recipe_sites:
-            urls = self._search_site_via_duckduckgo(query, site, per_site)
+            urls = self._search_one_site(query, site, per_site)
             recipe_urls.extend(urls)
-            if urls:
-                print(f"  ✓ {site}: {len(urls)} result(s)")
-            # Respect DDG rate limits
-            time.sleep(0.5)
+            status = f"✓ {len(urls)} result(s)" if urls else "✗ 0 results"
+            print(f"  {status} — {site}")
+            time.sleep(0.75)  # polite delay between sites
 
         unique_urls = list(dict.fromkeys(u for u in recipe_urls if self._is_valid_recipe_url(u)))
         print(f"✓ Found {len(unique_urls)} unique recipe URLs")
         return unique_urls[:num_results]
 
-    def _search_site_via_duckduckgo(self, query: str, site: str, limit: int) -> List[str]:
+    def _search_one_site(self, query: str, site: str, limit: int) -> List[str]:
         """
-        Use DuckDuckGo's HTML interface to search for `query site:<site>`.
-        Returns up to `limit` URLs that belong to the given domain.
+        Try both generic search URL patterns for `site` and return up to `limit`
+        recipe URLs. Stops as soon as one pattern yields results.
+        Silently skips sites that return errors or block the request.
         """
-        scoped_query = f"{query} site:{site}"
-        search_url = f"https://html.duckduckgo.com/html/?q={quote_plus(scoped_query)}"
+        encoded = quote_plus(query)
+        candidate_urls = [
+            pattern.format(domain=site, query=encoded)
+            for pattern in SEARCH_URL_PATTERNS
+        ]
 
+        for search_url in candidate_urls:
+            urls = self._fetch_recipe_links(search_url, site, limit)
+            if urls:
+                return urls  # First working pattern wins
+
+        return []
+
+    def _fetch_recipe_links(self, search_url: str, site: str, limit: int) -> List[str]:
+        """
+        Fetch `search_url`, parse the HTML, and return links that pass the
+        generic recipe URL heuristic for `site`.
+        Returns an empty list on any error (4xx, 5xx, timeout, etc.).
+        """
         try:
-            response = requests.get(search_url, headers=self.headers, timeout=10)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
+            response = requests.get(search_url, headers=self.headers, timeout=12)
+            if response.status_code != 200:
+                return []
 
+            soup = BeautifulSoup(response.text, "html.parser")
             urls = []
-            for a in soup.select("a.result__url, a.result__a"):
-                href = a.get("href", "")
-                # DDG sometimes wraps links – extract the real URL
-                href = self._unwrap_ddg_url(href)
-                if not href:
+
+            for a in soup.find_all("a", href=True):
+                href = a["href"]
+                # Resolve relative URLs
+                if href.startswith("/"):
+                    href = f"https://www.{site}{href}"
+                elif not href.startswith("http"):
                     continue
-                parsed = urlparse(href)
-                if site in parsed.netloc and self._is_valid_recipe_url(href):
-                    clean = href.split("?")[0].rstrip("/")
-                    if clean not in urls:
-                        urls.append(clean)
+
+                href = href.split("?")[0].rstrip("/")
+
+                if _is_recipe_link(href, site) and href not in urls:
+                    urls.append(href)
+
                 if len(urls) >= limit:
                     break
+
             return urls
 
-        except Exception as e:
-            print(f"  ⚠️  Search failed for {site}: {e}")
+        except requests.exceptions.RequestException:
             return []
-
-    @staticmethod
-    def _unwrap_ddg_url(href: str) -> str:
-        """DuckDuckGo sometimes returns //duckduckgo.com/l/?uddg=<encoded> links."""
-        if not href:
-            return ""
-        if href.startswith("//duckduckgo.com/l/"):
-            from urllib.parse import parse_qs, urlparse as _up
-            qs = parse_qs(_up(f"https:{href}").query)
-            return qs.get("uddg", [""])[0]
-        if href.startswith("//"):
-            return "https:" + href
-        return href
 
     # ------------------------------------------------------------------
     # URL validation
@@ -276,9 +328,13 @@ class RecipeSearchScraper:
     # ------------------------------------------------------------------
 
     def scrape_recipe(self, url: str) -> Optional[Dict]:
+        """Fetch and parse a single recipe URL. Returns None on any failure."""
         try:
             response = requests.get(url, headers=self.headers, timeout=15)
-            response.raise_for_status()
+            if response.status_code != 200:
+                print(f"  ✗ HTTP {response.status_code}: {url}")
+                return None
+
             scraper = scrape_html(html=response.content, org_url=url)
 
             return {
@@ -297,6 +353,11 @@ class RecipeSearchScraper:
                 "source_site":  urlparse(url).netloc,
                 "scraped_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
+
+        except requests.exceptions.HTTPError as e:
+            print(f"  ✗ HTTP error scraping {url}: {e}")
+            return None
+
         except Exception as e:
             print(f"  ✗ Failed to scrape {url}: {e}")
             return None
@@ -382,32 +443,24 @@ class RecipeSearchScraper:
     # Full workflow
     # ------------------------------------------------------------------
 
-    def search_and_scrape(
-        self,
-        query: str,
-        num_results: int = 20,
-        db_path: str = "recipes.db",
-    ) -> str:
-        """
-        Full pipeline: search → scrape → save to SQLite.
-        Returns the path to the database file.
-        """
+    def search_and_scrape(self, query: str, num_results: int = 20) -> str:
+        """Full pipeline: search → scrape → save to SQLite. Returns the DB path."""
         urls = self.search_recipe_sites_directly(query, num_results)
         if not urls:
             print("⚠️  No recipe URLs found!")
-            return db_path
+            return self.db_path
 
         recipes = self.scrape_multiple(urls, delay=1.5)
         if not recipes:
             print("⚠️  No recipes successfully scraped!")
-            return db_path
+            return self.db_path
 
-        save_recipes_to_db(recipes, query, db_path)
-        return db_path
+        save_recipes_to_db(recipes, query, self.db_path)
+        return self.db_path
 
 
 # ---------------------------------------------------------------------------
-# Entry point — accepts a query from the command line or prompts the user
+# Entry point
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -415,7 +468,6 @@ if __name__ == "__main__":
     print("🍳  RECIPE SEARCH & SCRAPER")
     print("=" * 60)
 
-    # Accept query from CLI argument or interactive prompt
     if len(sys.argv) > 1:
         user_query = " ".join(sys.argv[1:])
         print(f"\nUsing query from command line: '{user_query}'")
@@ -432,6 +484,6 @@ if __name__ == "__main__":
     db = scraper.search_and_scrape(query=user_query, num_results=num_results)
 
     print("\n" + "=" * 60)
-    print(f"✓ Done!  Results saved to: {db}")
-    print("  Query the DB with:  sqlite3 recipes.db 'SELECT title, source_site FROM recipes;'")
+    print(f"✓ Done! Results saved to: {db}")
+    print("  View results: sqlite3 recipes.db 'SELECT title, source_site FROM recipes;'")
     print("=" * 60)
