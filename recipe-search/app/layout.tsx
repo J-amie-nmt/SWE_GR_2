@@ -1,4 +1,6 @@
+// layout page
 import "./globals.css"
+import "./theme.css"   //
 import Nav from "./components/Nav"
 import { Providers } from './providers'
 
@@ -6,7 +8,6 @@ export const metadata = {
   title: "Shins Cookbook",
   description: "Find and save recipes from anywhere",
 }
-
 export default function RootLayout({
   children,
 }: {
@@ -14,19 +15,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif" }}>
+      <body>
         <Providers>
           <Nav />
-          <main style={{ padding: "2rem" }}>
-            {children}
-          </main>
+          {children}
           <footer style={{
             textAlign: "center",
-            padding: "1rem",
-            borderTop: "1px solid #ddd",
-            marginTop: "2rem"
+            padding: "20px 32px",
+            borderTop: "1px solid var(--border)",
+            marginTop: "48px",
+            fontSize: "0.75rem",
+            color: "var(--ink-muted)",
+            background: "var(--bg)",
           }}>
-            © {new Date().getFullYear()} Shins Cookbook
+            {new Date().getFullYear()} Dr.Dans Cookbook
           </footer>
         </Providers>
       </body>
