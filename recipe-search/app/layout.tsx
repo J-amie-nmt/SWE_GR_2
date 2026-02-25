@@ -5,7 +5,7 @@ import Nav from "./components/Nav"
 import { Providers } from './providers'
 
 export const metadata = {
-  title: "Shins Cookbook",
+  title: "Dr.Dans Cookbook",
   description: "Find and save recipes from anywhere",
 }
 export default function RootLayout({
