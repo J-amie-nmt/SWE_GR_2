@@ -9,21 +9,18 @@ const HERO = {
 }
 
 const ABOUT = {
-  heading: "About this project",
+  heading: "About This Website",
   paragraphs: [
-    "Somethig something",
-    "Something something",
+    "This website was made by a group of software engineers who were trying to make a website that will store various recipe types while allowing users to search for them based on certain qualities of the dish. This website was created in Next.js and the front end devs designed and stylized most of the features. If you would like to find out more about the developers we have an about page link at the top of the website :) ",
+    "Actual funcionality of the website here maybe?",
   ],
 }
 
 const STATS = [
-  { number: "—", label: "Stat with amount of recipes" },
-  { number: "—", label: "Stat with amount of filters" },
-  { number: "—", label: "Stat with somethign else?" },
+  { number: "X many", label: "Stat with amount of recipes" },
+  { number: "X many", label: "Stat with amount of filters" },
+  { number: "X many", label: "Some other stat" },
 ]
-
-
-// ── END CONTENT ─────────────────────────────
 
 export default function Home() {
   return (

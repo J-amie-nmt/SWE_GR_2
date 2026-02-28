@@ -8,7 +8,7 @@ export default function RecipesPage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // wire up your scraper/API call here using `text`
+    // wire up scraper/API call here using `text`
     console.log("Searching for:", text)
   }
 
@@ -48,21 +48,8 @@ export default function RecipesPage() {
 
       <hr className="divider" style={{ marginBottom: 48 }} />
 
-      {/* RESULTS AREA */}
+      {/* RESULTS AREA NO IMPORTS YET*/}
       <span className="section-label" style={{ marginBottom: 20, display: "block" }}>Results</span>
-
-      {/* 
-        TODO: Replace this placeholder grid with your actual recipe results.
-        Map over your results array and render a .card for each recipe.
-
-        Example structure:
-        results.map(recipe => (
-          <div key={recipe.id} className="card">
-            <h3>{recipe.title}</h3>
-            <p>{recipe.description}</p>
-          </div>
-        ))
-      */}
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",

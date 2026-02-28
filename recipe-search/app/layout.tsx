@@ -6,7 +6,7 @@ import { Providers } from './providers'
 
 export const metadata = {
   title: "Dr.Dans Cookbook",
-  description: "Find and save recipes from anywhere",
+  description: "Search for recipes based on basic filters!",
 }
 export default function RootLayout({
   children,
