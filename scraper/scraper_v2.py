@@ -148,7 +148,7 @@ LISTING_PATH_SEGMENTS = {
 
 PERMANENT_FAILURE_CODES = {402, 403, 406, 429}
 
-DB_PATH = "recipes.db"
+DB_PATH = "recipes_v2.db"
 
 
 # ═══════════════════════════════════════════════════════════════
