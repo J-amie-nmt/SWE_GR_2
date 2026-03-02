@@ -4,9 +4,10 @@
 const TEAM = [
   { name: "Tristan Coull",  role: "Team Lead", bio: "Hi! I am the team lead for the Dr.Dans cookbook team. I mostly contributed to the front end of the website but I also helped to plan and facilitate back end and front end functionality." },
   { name: "Caelan Eakman",  role: "Front-end Dev", bio: "Short bio here." },
+  { name: "Amin Weinman",   role: "Front-end Dev", bio: "Short bio here." },
   { name: "Jamie Farrow",   role: "Back-end Dev", bio: "Short bio here." },
   { name: "Miles Taylor",   role: "Back-end Dev", bio: "Short bio here." },
-  { name: "Amin Weinman",   role: "Front-end Dev", bio: "Short bio here." },
+  
 ]
 
 export default function AboutPage() {
