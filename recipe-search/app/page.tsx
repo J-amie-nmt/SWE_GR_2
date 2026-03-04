@@ -16,14 +16,35 @@ const ABOUT = {
   ],
 }
 
+async function getStats() {
+  try {
+    const res = await fetch("http://localhost:8000/api/stats", {
+      next: { revalidate: 60 },
+    })
+    if (!res.ok) throw new Error()
+    return await res.json()
+  } catch {
+    return { total_recipes: "—", total_sites: "—", total_cuisines: "—" }
+  }
+}
+
 const STATS = [
   { number: "X many", label: "Stat with amount of recipes" },
   { number: "X many", label: "Stat with amount of filters" },
   { number: "X many", label: "Some other stat" },
 ]
 
-export default function Home() {
+
+export default async function Home() {
+  const stats = await getStats()
+
+  const STATS = [
+    { number: stats.total_recipes,  label: "Recipes in the catalog" },
+    { number: stats.total_sites,    label: "Recipe sites scraped"   },
+    { number: stats.total_cuisines, label: "Cuisines represented"   },
+  ]
   return (
+    
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
 
       {/* HERO */}

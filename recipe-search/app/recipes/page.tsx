@@ -1,15 +1,42 @@
-//Recipe search page
+// app/recipes/page.tsx
 'use client'
+import { useState } from 'react'
+import Link from 'next/link'
 
-import { useState } from 'react';
+interface RecipeSummary {
+  id: number
+  title: string
+  source_site: string
+  image_url: string
+  total_time: string
+  yields: string
+  cuisine: string
+  dietary_tags: string
+  calories: string
+}
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
+  const [results, setResults] = useState<RecipeSummary[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searched, setSearched] = useState(false)
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    // wire up scraper/API call here using `text`
-    console.log("Searching for:", text)
+    if (!text.trim()) return
+    setLoading(true)
+    setSearched(true)
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/recipes?q=${encodeURIComponent(text)}&limit=20`
+      )
+      const data = await res.json()
+      setResults(data)
+    } catch {
+      setResults([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -21,7 +48,7 @@ export default function RecipesPage() {
         Recipe Search
       </h1>
       <p style={{ marginBottom: 40, fontSize: "0.95rem", maxWidth: 500 }}>
-        Search be ingredients, cuisine type, dietary preferences, and ratings!
+        Search by ingredients, cuisine type, dietary preferences, and ratings!
       </p>
 
       {/* SEARCH BAR */}
@@ -31,47 +58,84 @@ export default function RecipesPage() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="e.g. 3 Onions, American, Low Carb"
-          style={{
-            flex: 1,
-            borderRadius: "4px 0 0 4px",
-            borderRight: "none",
-          }}
+          style={{ flex: 1, borderRadius: "4px 0 0 4px", borderRight: "none" }}
         />
         <button
           type="submit"
           className="btn"
           style={{ borderRadius: "0 4px 4px 0", whiteSpace: "nowrap" }}
         >
-          Search
+          {loading ? "Searching…" : "Search"}
         </button>
       </form>
 
       <hr className="divider" style={{ marginBottom: 48 }} />
 
-      {/* RESULTS AREA NO IMPORTS YET*/}
+      {/* RESULTS */}
       <span className="section-label" style={{ marginBottom: 20, display: "block" }}>Results</span>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-        gap: 16,
-      }}>
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="card" style={{ opacity: 0.4 }}>
-            <div style={{
-              height: 12, borderRadius: 4,
-              background: "var(--border)", marginBottom: 12,
-            }} />
-            <div style={{
-              height: 8, borderRadius: 4,
-              background: "var(--border)", marginBottom: 8, width: "70%",
-            }} />
-            <div style={{
-              height: 8, borderRadius: 4,
-              background: "var(--border)", width: "50%",
-            }} />
-          </div>
-        ))}
-      </div>
+
+      {/* Skeleton — shown before first search */}
+      {!searched && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="card" style={{ opacity: 0.4 }}>
+              <div style={{ height: 12, borderRadius: 4, background: "var(--border)", marginBottom: 12 }} />
+              <div style={{ height: 8, borderRadius: 4, background: "var(--border)", marginBottom: 8, width: "70%" }} />
+              <div style={{ height: 8, borderRadius: 4, background: "var(--border)", width: "50%" }} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Loading skeleton */}
+      {loading && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="card" style={{ opacity: 0.4, animation: "pulse 1.5s infinite" }}>
+              <div style={{ height: 140, borderRadius: 4, background: "var(--border)", marginBottom: 12 }} />
+              <div style={{ height: 12, borderRadius: 4, background: "var(--border)", marginBottom: 8 }} />
+              <div style={{ height: 8, borderRadius: 4, background: "var(--border)", width: "70%", marginBottom: 8 }} />
+              <div style={{ height: 8, borderRadius: 4, background: "var(--border)", width: "50%" }} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* No results */}
+      {searched && !loading && results.length === 0 && (
+        <p style={{ color: "var(--ink-muted)", fontSize: "0.95rem" }}>
+          No recipes found for <strong>"{text}"</strong>. Try different keywords.
+        </p>
+      )}
+
+      {/* Recipe cards */}
+      {!loading && results.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+          {results.map((r) => (
+            <Link
+              key={r.id}
+              href={`/recipes/${r.id}`}
+              className="card"
+              style={{ textDecoration: "none", color: "inherit", display: "block" }}
+            >
+              {r.image_url && (
+                <img
+                  src={r.image_url}
+                  alt={r.title}
+                  style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 4, marginBottom: 12 }}
+                />
+              )}
+              <p style={{ fontWeight: 600, marginBottom: 4, fontSize: "0.95rem" }}>{r.title}</p>
+              <p style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginBottom: 4 }}>
+                {r.source_site}{r.total_time ? ` · ${r.total_time}` : ""}{r.cuisine ? ` · ${r.cuisine}` : ""}
+              </p>
+              {r.dietary_tags && (
+                <span className="pill" style={{ fontSize: "0.7rem" }}>{r.dietary_tags}</span>
+              )}
+            </Link>
+          ))}
+        </div>
+      )}
 
     </div>
   )
