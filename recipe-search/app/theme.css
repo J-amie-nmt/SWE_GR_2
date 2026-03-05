@@ -2,22 +2,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=Fraunces:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-  --bg:           #2b0a0a;   /* deep maroon background */
-  --bg-raised:    #3a1010;   /* slightly lighter maroon for cards */
-  --bg-card:      #4a1818;   /* card surface */
-  --border:       #6b2020;   /* subtle maroon border */
-  --ink:          #e8f5a3;   /* lime green — primary text */
-  --ink-muted:    #a8b86a;   /* muted lime for secondary text */
-  --accent:       #c5f135;   /* bright lime — buttons, highlights */
+  --bg: #2b0a0a;
+  /* maroon background */
+  --bg-raised: #3a1010;
+  /* slightly lighter maroon for cards */
+  --bg-card: #4a1818;
+  /* card surface */
+  --border: #6b2020;
+  /* subtle maroon border */
+  --ink: #e8f5a3;
+  /* lime green — primary text */
+  --ink-muted: #a8b86a;
+  /* muted lime for secondary text */
+  --accent: #c5f135;
+  /* bright lime — buttons, highlights */
   --accent-hover: #d9ff4f;
-  --accent-dim:   #3a4a10;   /* dim lime for backgrounds behind accent text */
-  --white:        #f5f5f0;
-  --danger:       #ff6b6b;
+  --accent-dim: #3a4a10;
+  /* dim lime for backgrounds behind accent text */
+  --white: #f5f5f0;
+  --danger: #ff6b6b;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background: var(--bg);
@@ -29,17 +45,29 @@ body {
 }
 
 /* Typography*/
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: 'Fraunces', serif;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.5px;
 }
 
-p { line-height: 1.75; color: var(--ink-muted); }
+p {
+  line-height: 1.75;
+  color: var(--ink-muted);
+}
 
-a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
-a:hover { color: var(--accent-hover); }
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
 
 /*Buttons*/
 .btn {
@@ -56,14 +84,23 @@ a:hover { color: var(--accent-hover); }
   transition: background 0.2s, transform 0.15s;
   text-decoration: none;
 }
-.btn:hover { background: var(--accent-hover); transform: translateY(-1px); color: var(--bg); }
+
+.btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  color: var(--bg);
+}
 
 .btn-outline {
   background: transparent;
   border: 1.5px solid var(--accent);
   color: var(--accent);
 }
-.btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+.btn-outline:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
 
 /*Cards*/
 .card {
@@ -73,10 +110,16 @@ a:hover { color: var(--accent-hover); }
   padding: 24px;
   transition: border-color 0.2s, transform 0.2s;
 }
-.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
 
 /*inputs*/
-input, textarea, select {
+input,
+textarea,
+select {
   background: var(--bg-raised);
   border: 1.5px solid var(--border);
   border-radius: 4px;
@@ -88,8 +131,18 @@ input, textarea, select {
   transition: border-color 0.2s;
   width: 100%;
 }
-input::placeholder, textarea::placeholder { color: var(--ink-muted); opacity: 0.6; }
-input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.6;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+}
 
 /*pills*/
 .pill {
@@ -130,12 +183,24 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); }
 
 /*page animation*/
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.fade-up { animation: fadeUp 0.6s ease both; }
+
+.fade-up {
+  animation: fadeUp 0.6s ease both;
+}
 
 /*responsive */
 @media (max-width: 640px) {
-  .page-content { padding: 40px 20px; }
+  .page-content {
+    padding: 40px 20px;
+  }
 }

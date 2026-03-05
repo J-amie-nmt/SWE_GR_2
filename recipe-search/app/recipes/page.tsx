@@ -57,7 +57,7 @@ export default function RecipesPage() {
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="e.g. 3 Onions, American, Low Carb"
+          placeholder="e.g. 3 Onions, Vegetarian, Gluten-Free"
           style={{ flex: 1, borderRadius: "4px 0 0 4px", borderRight: "none" }}
         />
         <button
@@ -65,7 +65,7 @@ export default function RecipesPage() {
           className="btn"
           style={{ borderRadius: "0 4px 4px 0", whiteSpace: "nowrap" }}
         >
-          {loading ? "Searching…" : "Search"}
+          {loading ? "Searching..." : "Search"}
         </button>
       </form>
 
@@ -74,17 +74,11 @@ export default function RecipesPage() {
       {/* RESULTS */}
       <span className="section-label" style={{ marginBottom: 20, display: "block" }}>Results</span>
 
-      {/* Skeleton — shown before first search */}
+      {/* Skeleton — shown before first search*/}
       {!searched && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="card" style={{ opacity: 0.4 }}>
-              <div style={{ height: 12, borderRadius: 4, background: "var(--border)", marginBottom: 12 }} />
-              <div style={{ height: 8, borderRadius: 4, background: "var(--border)", marginBottom: 8, width: "70%" }} />
-              <div style={{ height: 8, borderRadius: 4, background: "var(--border)", width: "50%" }} />
-            </div>
-          ))}
-        </div>
+        <p style={{ color: "var(--ink-muted)", fontSize: "0.95rem" }}>
+          Searched recipes will appear here
+        </p>
       )}
 
       {/* Loading skeleton */}

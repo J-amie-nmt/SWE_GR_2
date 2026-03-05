@@ -3,17 +3,17 @@ from fastapi import FastAPI, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3, sys, os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scraper'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scraper')) # hard coded for local testing will need to change when pushing to online backend
 from scraper_v2 import RecipeSearchScraper, list_recipes
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "..", "scraper", "recipes_V2.db")
+DB_PATH = os.path.join(BASE_DIR, "..", "scraper", "recipes_V2.db") # hard coded for local testing wil need to change when pushed to online backend
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000"], # hard coded for local testing will need to change when pushed to online frontend
     allow_methods=["*"],
     allow_headers=["*"],
 )

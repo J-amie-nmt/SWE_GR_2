@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
-interface RecipeDetail {
+interface RecipeDetail { //Current flags pulled from webscraper. Want to add more in future such as nationalities or other dietary restrictions
   id: number
   title: string
   source_site: string
@@ -32,7 +32,7 @@ export default function RecipeDetailPage() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/recipes/${id}`)
+    fetch(`http://localhost:8000/api/recipes/${id}`) // uvicorn running on 8000 that transmits backend data here. When its time for online push will need to change
       .then((res) => {
         if (!res.ok) throw new Error()
         return res.json()
@@ -65,22 +65,22 @@ export default function RecipeDetailPage() {
   )
 
   const nutrients = [
-    { label: "Calories",      value: recipe.calories },
-    { label: "Fat",           value: recipe.fat_content },
-    { label: "Carbs",         value: recipe.carbohydrate_content },
-    { label: "Protein",       value: recipe.protein_content },
-    { label: "Sodium",        value: recipe.sodium_content },
+    { label: "Calories", value: recipe.calories },
+    { label: "Fat", value: recipe.fat_content },
+    { label: "Carbs", value: recipe.carbohydrate_content },
+    { label: "Protein", value: recipe.protein_content },
+    { label: "Sodium", value: recipe.sodium_content },
   ].filter((n) => n.value)
 
   return (
     <div className="page-content fade-up" style={{ maxWidth: 740 }}>
 
-      {/* BACK */}
+      {/* back */}
       <Link href="/recipes" style={{ fontSize: "0.85rem", color: "var(--ink-muted)", textDecoration: "none", display: "inline-block", marginBottom: 24 }}>
         ← Back to Search
       </Link>
 
-      {/* IMAGE */}
+      {/* image */}
       {recipe.image_url && (
         <img
           src={recipe.image_url}
@@ -89,17 +89,17 @@ export default function RecipeDetailPage() {
         />
       )}
 
-      {/* TITLE */}
+      {/* title */}
       <span className="section-label">{recipe.source_site}</span>
       <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: "clamp(1.6rem, 4vw, 2.4rem)", marginTop: 8, marginBottom: 12 }}>
         {recipe.title}
       </h1>
 
-      {/* META PILLS */}
+      {/* pills */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
-        {recipe.total_time  && <span className="pill">{recipe.total_time}</span>}
-        {recipe.yields      && <span className="pill">{recipe.yields}</span>}
-        {recipe.cuisine     && <span className="pill">{recipe.cuisine}</span>}
+        {recipe.total_time && <span className="pill">{recipe.total_time}</span>}
+        {recipe.yields && <span className="pill">{recipe.yields}</span>}
+        {recipe.cuisine && <span className="pill">{recipe.cuisine}</span>}
         {recipe.dietary_tags && recipe.dietary_tags.split(',').map((t) => (
           <span key={t} className="pill">{t.trim()}</span>
         ))}
@@ -107,7 +107,7 @@ export default function RecipeDetailPage() {
 
       <hr className="divider" style={{ marginBottom: 36 }} />
 
-      {/* NUTRITION */}
+      {/* nutriton */}
       {nutrients.length > 0 && (
         <>
           <span className="section-label" style={{ marginBottom: 12, display: "block" }}>Nutrition</span>
@@ -124,7 +124,7 @@ export default function RecipeDetailPage() {
         </>
       )}
 
-      {/* INGREDIENTS */}
+      {/* ingredients */}
       <span className="section-label" style={{ marginBottom: 12, display: "block" }}>Ingredients</span>
       <ul style={{ paddingLeft: 20, marginBottom: 36 }}>
         {recipe.ingredients.map((ing, i) => (
@@ -134,7 +134,7 @@ export default function RecipeDetailPage() {
 
       <hr className="divider" style={{ marginBottom: 36 }} />
 
-      {/* INSTRUCTIONS */}
+      {/* instructions */}
       <span className="section-label" style={{ marginBottom: 12, display: "block" }}>Instructions</span>
       <ol style={{ paddingLeft: 20, marginBottom: 36 }}>
         {recipe.instructions.map((step, i) => (
@@ -142,7 +142,7 @@ export default function RecipeDetailPage() {
         ))}
       </ol>
 
-      {/* SOURCE LINK */}
+      {/* original link K */}
       <a href={recipe.url} target="_blank" rel="noopener noreferrer" className="btn">
         View Original Recipe ↗
       </a>
