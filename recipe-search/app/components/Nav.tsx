@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import DCBLogo from "./DCBLogo"
 
 export default function Nav() {
   return (
     <nav style={{ padding: "1rem", borderBottom: "1px solid #ddd" }}>
-      <strong>Dr.Dans Cookbook</strong>{" "}
+      <Link href="/"><DCBLogo/></Link>
       <Link href="/">Home</Link>{" "}
       <Link href="/recipes">Recipes</Link>{" "}
       <Link href="/about">About</Link>{" "}
