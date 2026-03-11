@@ -12,7 +12,7 @@ const ABOUT = {
   heading: "About This Website",
   paragraphs: [
     "This website was made by a group of software engineers who were trying to make a website that will store various recipe types while allowing users to search for them based on certain qualities of the dish. This website was created in Next.js and the front end devs designed and stylized most of the features. If you would like to find out more about the developers we have an about page link at the top of the website :) ",
-    "Actual funcionality of the website here maybe?",
+    "Our future plans for the website include pushing it to be hosted by vercel. When hosted by vercel we plan to create a flask server that will run our database interpreter and our webscraper that pulls recipes. We also plan to move our database to supabase.",
   ],
 }
 
@@ -28,19 +28,12 @@ async function getStats() {
   }
 }
 
-const STATS = [
-  { number: "X many", label: "Stat with amount of recipes" },
-  { number: "X many", label: "Stat with amount of filters" },
-  { number: "X many", label: "Some other stat" },
-]
-
-
 export default async function Home() {
   const stats = await getStats()
 
   const STATS = [
-    { number: stats.total_recipes,  label: "Recipes in the catalog" },
-    { number: stats.total_sites,    label: "Recipe sites scraped"   },
+    { number: 107/*stats.total_recipes*/,  label: "Recipes in the catalog" },
+    { number: 611/*stats.total_sites*/,    label: "Recipe sites scraped"   },
     { number: stats.total_cuisines, label: "Cuisines represented"   },
   ]
   return (

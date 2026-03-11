@@ -2,11 +2,11 @@
 'use client'
 
 const TEAM = [
-  { name: "Tristan Coull",  role: "Team Lead", bio: "Hi! I am the team lead for the Dr.Dans cookbook team. I mostly contributed to the front end of the website but I also helped to plan and facilitate back end and front end functionality." },
-  { name: "Caelan Eakman",  role: "Front-end Dev", bio: "Short bio here." },
-  { name: "Amin Weinman",   role: "Front-end Dev", bio: "Short bio here." },
-  { name: "Jamie Farrow",   role: "Back-end Dev", bio: "Short bio here." },
-  { name: "Miles Taylor",   role: "Back-end Dev", bio: "Short bio here." },
+  { name: "Tristan Coull",  role: "Team Lead", bio: "----" },
+  { name: "Caelan Eakman",  role: "Front-end Dev", bio: "----" },
+  { name: "Amin Weinman",   role: "Front-end Dev", bio: "----" },
+  { name: "Jamie Farrow",   role: "Back-end Dev", bio: "-----" },
+  { name: "Miles Taylor",   role: "Back-end Dev", bio: "----" },
   
 ]
 
@@ -19,14 +19,11 @@ export default function AboutPage() {
       <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", marginTop: 8, marginBottom: 16 }}>
         Team Information
       </h1>
-      <p style={{ maxWidth: 560, marginBottom: 64, fontSize: "0.95rem" }}>
-        Team intro something something
-      </p>
 
       <hr className="divider" style={{ marginBottom: 64 }} />
 
       {/* Team members*/}
-      <span className="section-label" style={{ marginBottom: 24, display: "block" }}>Meet the team</span>
+      <span className="section-label" style={{ marginBottom: 24, display: "block" }}>Our Teams Contribution</span>
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
