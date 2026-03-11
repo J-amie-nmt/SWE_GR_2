@@ -7,7 +7,7 @@ type Props = {
 }
 
 export default function DCBLogo({
-  size = 200,
+  size = 75,
   animateOnHover = true,
   highlightOnHover = true
 }: Props) {

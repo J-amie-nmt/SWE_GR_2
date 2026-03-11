@@ -181,6 +181,39 @@ select:focus {
   margin-bottom: 16px;
 }
 
+/* Nav pills */
+.nav-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  background: var(--bg-raised);
+  color: var(--ink-muted);
+  padding: 8px 30px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  font-family: 'Sora', sans-serif;
+}
+
+.nav-pill:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.nav-pill--accent {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.nav-pill--accent:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
 /*page animation*/
 @keyframes fadeUp {
   from {
