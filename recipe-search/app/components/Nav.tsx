@@ -17,7 +17,8 @@ export default function Nav() {
         <DCBLogo />
       </Link>
       <Link href="/" className="nav-pill">Home</Link>
-      <Link href="/recipes" className="nav-pill">Recipes</Link>
+      <Link href="/search" className="nav-pill">Search Recipes</Link>
+      <Link href="/saved" className="nav-pill">Saved Recipes</Link>
       <Link href="/about" className="nav-pill">About</Link>
       <div style={{ position: "absolute", top: "50%", right: "1rem", transform: "translateY(-50%)" }}>
         <Link href="/login" className="nav-pill nav-pill--accent">Login</Link>

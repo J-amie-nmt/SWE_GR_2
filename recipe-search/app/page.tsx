@@ -2,7 +2,7 @@
 const SITE_NAME = "Dr.Dans's Cookbook"
 
 const HERO = {
-  tagline: "Find recipes based on basic filters",
+  tagline: "Find recipes based on basic searches",
   description: "If you have ever found yourself trying to find something to do with a random assortment of ingredients this website is for you. Using our webscraper we compiled a various recipe catalog that you can search with a wide variety of filters. ",
   ctaText: "Search Recipes Quickly",
   ctaLink: "/recipes",
@@ -16,25 +16,13 @@ const ABOUT = {
   ],
 }
 
-async function getStats() {
-  try {
-    const res = await fetch("http://localhost:8000/api/stats", {
-      next: { revalidate: 60 },
-    })
-    if (!res.ok) throw new Error()
-    return await res.json()
-  } catch {
-    return { total_recipes: "—", total_sites: "—", total_cuisines: "—" }
-  }
-}
-
 export default async function Home() {
-  const stats = await getStats()
+
 
   const STATS = [
     { number: 107/*stats.total_recipes*/,  label: "Recipes in the catalog" },
-    { number: 611/*stats.total_sites*/,    label: "Recipe sites scraped"   },
-    { number: stats.total_cuisines, label: "Cuisines represented"   },
+    { number: 120/*stats.total_sites*/,    label: "Recipe sites scraped"   },
+    { number: 3 , label: "Number of scrapes run"   },
   ]
   return (
     
@@ -46,9 +34,7 @@ export default async function Home() {
         padding: "100px 32px 80px",
         textAlign: "center",
       }}>
-        <span className="pill" style={{ marginBottom: 28, display: "inline-block" }}>
-          {SITE_NAME}
-        </span>
+	
         <h1 style={{
           fontFamily: "'Fraunces', serif",
           fontSize: "clamp(2.4rem, 5vw, 4rem)",
@@ -72,8 +58,8 @@ export default async function Home() {
         maxWidth: 880, margin: "0 auto",
         padding: "80px 32px",
         display: "grid",
-        gridTemplateColumns: "180px 1fr",
-        gap: 64,
+        gridTemplateColumns: "180px 1fr", 
+         gap: 64,
       }}>
         <div className="section-label" style={{ paddingTop: 4 }}>About</div>
         <div>
@@ -100,7 +86,7 @@ export default async function Home() {
         border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden",
       }}>
         {STATS.map((s, i) => (
-          <div key={i} style={{ background: "var(--bg-card)", padding: "28px 32px" }}>
+          <div key={i} style={{ background: "var(--bg-card)", padding: "29px 35px" }}>
             <span style={{
               display: "block",
               fontFamily: "'Fraunces', serif",
