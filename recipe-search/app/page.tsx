@@ -5,7 +5,7 @@ const HERO = {
   tagline: "Find recipes based on basic searches",
   description: "If you have ever found yourself trying to find something to do with a random assortment of ingredients this website is for you. Using our webscraper we compiled a various recipe catalog that you can search with a wide variety of filters. ",
   ctaText: "Search Recipes Quickly",
-  ctaLink: "/recipes",
+  ctaLink: "/search",
 }
 
 const ABOUT = {
@@ -20,12 +20,12 @@ export default async function Home() {
 
 
   const STATS = [
-    { number: 107/*stats.total_recipes*/,  label: "Recipes in the catalog" },
-    { number: 120/*stats.total_sites*/,    label: "Recipe sites scraped"   },
-    { number: 3 , label: "Number of scrapes run"   },
+    { number: 107/*stats.total_recipes*/, label: "Recipes in the catalog" },
+    { number: 120/*stats.total_sites*/, label: "Recipe sites scraped" },
+    { number: 3, label: "Number of scrapes run" },
   ]
   return (
-    
+
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
 
       {/* HERO */}
@@ -34,7 +34,7 @@ export default async function Home() {
         padding: "100px 32px 80px",
         textAlign: "center",
       }}>
-	
+
         <h1 style={{
           fontFamily: "'Fraunces', serif",
           fontSize: "clamp(2.4rem, 5vw, 4rem)",
@@ -58,8 +58,8 @@ export default async function Home() {
         maxWidth: 880, margin: "0 auto",
         padding: "80px 32px",
         display: "grid",
-        gridTemplateColumns: "180px 1fr", 
-         gap: 64,
+        gridTemplateColumns: "180px 1fr",
+        gap: 64,
       }}>
         <div className="section-label" style={{ paddingTop: 4 }}>About</div>
         <div>

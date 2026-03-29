@@ -1,4 +1,4 @@
-// app/recipes/page.tsx
+// app/search/page.tsx
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -15,6 +15,8 @@ interface RecipeSummary {
   calories: string
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
 export default function RecipesPage() {
   const [text, setText] = useState('')
   const [results, setResults] = useState<RecipeSummary[]>([])
@@ -28,7 +30,7 @@ export default function RecipesPage() {
     setSearched(true)
     try {
       const res = await fetch(
-        `http://localhost:8000/api/recipes?q=${encodeURIComponent(text)}&limit=20`
+        `${API_BASE}/api/recipes?q=${encodeURIComponent(text)}&limit=20`
       )
       const data = await res.json()
       setResults(data)
@@ -74,14 +76,12 @@ export default function RecipesPage() {
       {/* RESULTS */}
       <span className="section-label" style={{ marginBottom: 20, display: "block" }}>Results</span>
 
-      {/* Skeleton — shown before first search*/}
       {!searched && (
         <p style={{ color: "var(--ink-muted)", fontSize: "0.95rem" }}>
           Searched recipes will appear here
         </p>
       )}
 
-      {/* Loading skeleton */}
       {loading && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -95,14 +95,12 @@ export default function RecipesPage() {
         </div>
       )}
 
-      {/* No results */}
       {searched && !loading && results.length === 0 && (
         <p style={{ color: "var(--ink-muted)", fontSize: "0.95rem" }}>
           No recipes found for <strong>"{text}"</strong>. Try different keywords.
         </p>
       )}
 
-      {/* Recipe cards */}
       {!loading && results.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
           {results.map((r) => (

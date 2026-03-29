@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",
-    "next": "16.1.6",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "next": "^16.2.0",
     "next-auth": "^4.24.13",
     "react": "19.2.3",
     "react-dom": "19.2.3"

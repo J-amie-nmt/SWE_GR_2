@@ -1,13 +1,17 @@
-// layout page
+//layout.tsx
+
 import "./globals.css"
-import "./theme.css"   //
+import "./theme.css"
 import Nav from "./components/Nav"
 import { Providers } from './providers'
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata = {
   title: "Dr.Dans Cookbook",
   description: "Search for recipes based on basic filters!",
 }
+
 export default function RootLayout({
   children,
 }: {
@@ -31,6 +35,8 @@ export default function RootLayout({
             {new Date().getFullYear()} Dr.Dans Cookbook
           </footer>
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
