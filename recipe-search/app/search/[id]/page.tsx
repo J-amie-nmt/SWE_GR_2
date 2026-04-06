@@ -32,7 +32,7 @@ export default function RecipeDetailPage() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/recipes/${id}`) // uvicorn running on 8000 that transmits backend data here. When its time for online push will need to change
+    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/recipes/${id}`) // uvicorn running on 8000 that transmits backend data here. When its time for online push will need to change
       .then((res) => {
         if (!res.ok) throw new Error()
         return res.json()
