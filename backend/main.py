@@ -10,7 +10,7 @@ from scraper_v2 import RecipeSearchScraper, list_recipes
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://drdancookbook.vercel.app")
 
 app = FastAPI()
 
