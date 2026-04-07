@@ -1,6 +1,7 @@
 // app/search/page.tsx
 'use client'
 import { useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
 interface RecipeSummary {
@@ -15,7 +16,10 @@ interface RecipeSummary {
   calories: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
@@ -23,23 +27,25 @@ export default function RecipesPage() {
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!text.trim()) return
-    setLoading(true)
-    setSearched(true)
-    try {
-      const res = await fetch(
-        `${API_BASE}/api/recipes?q=${encodeURIComponent(text)}&limit=20`
-      )
-      const data = await res.json()
-      setResults(data)
-    } catch {
-      setResults([])
-    } finally {
-      setLoading(false)
-    }
+const handleSearch = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (!text.trim()) return
+  setLoading(true)
+  setSearched(true)
+  try {
+    const { data } = await supabase
+      .from('recipes')
+      .select('id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories')
+      .ilike('title', `%${text}%`)
+      .order('id', { ascending: false })
+      .limit(20)
+    setResults(data || [])
+  } catch {
+    setResults([])
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="page-content fade-up">
