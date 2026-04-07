@@ -22,6 +22,8 @@ app.add_middleware(
 )
 
 def get_db() -> Client:
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        raise RuntimeError("Supabase credentials not configured")
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
