@@ -30,13 +30,13 @@ def get_db() -> Client:
 def search_recipes(q: str = "", limit: int = 20):
     db = get_db()
     query = db.table("recipes") \
-        .select("id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories") \
-        .order("id", desc=True) \
-        .limit(limit)
-
+        .select("id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories")
+    
     if q:
-        query = query.ilike("title", f"%{q}%")
-
+        query = query.ilike("title", f"%{q}%")  # filter BEFORE limit
+    
+    query = query.order("id", desc=True).limit(limit)
+    
     rows = query.execute().data
     return rows
 
