@@ -1,6 +1,8 @@
 // recipe-search/src/lib/api.ts
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+console.log("BASE URL:", BASE);
+
 export interface RecipeSummary {
   id: number;
   title: string;

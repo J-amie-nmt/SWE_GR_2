@@ -25,6 +25,9 @@ interface RecipeDetail { //Current flags pulled from webscraper. Want to add mor
   instructions: string[]
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
+
 export default function RecipeDetailPage() {
   const { id } = useParams()
   const [recipe, setRecipe] = useState<RecipeDetail | null>(null)
@@ -32,7 +35,7 @@ export default function RecipeDetailPage() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/recipes/${id}`) // uvicorn running on 8000 that transmits backend data here. When its time for online push will need to change
+    fetch(`${API_BASE}/api/recipes/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error()
         return res.json()

@@ -1,6 +1,7 @@
 // app/search/page.tsx
 'use client'
 import { useState } from 'react'
+
 import Link from 'next/link'
 
 interface RecipeSummary {
@@ -15,10 +16,14 @@ interface RecipeSummary {
   calories: string
 }
 
+
 const API_BASE = process.env.NEXT_PUBLIC_SUPABASE_URL
 if (!API_BASE) {
   console.warn("NEXT_PUBLIC_SUPABASE_URL is not set — API calls will fail")
 }
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL?? "http://localhost:8000"
+
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
@@ -26,6 +31,7 @@ export default function RecipesPage() {
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,7 +58,27 @@ export default function RecipesPage() {
     } finally {
       setLoading(false)
     }
+
+const handleSearch = async (e: React.FormEvent) => {
+  e.preventDefault()
+  console.log("API_BASE:", API_BASE) 
+  console.log("FULL URL:", `${API_BASE}/api/recipes?q=${text}`) 
+  if (!text.trim()) return
+  setLoading(true)
+  setSearched(true)
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/recipes?q=${encodeURIComponent(text)}&limit=20`
+    )
+    const data = await res.json()
+    setResults(data)
+  } catch {
+    setResults([])
+  } finally {
+    setLoading(false)
+
   }
+}
 
   return (
     <div className="page-content fade-up">
