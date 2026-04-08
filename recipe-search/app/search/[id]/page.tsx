@@ -35,7 +35,7 @@ export default function RecipeDetailPage() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/recipes/${id}`)
+    fetch(`${API_BASE}/api/Recipes/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error()
         return res.json()
