@@ -42,7 +42,7 @@ def search_recipes(q: str = "", limit: int = 20):
 
 
 # --- GET /api/recipes/:id ---
-@app.get("/api/Recipes/{recipe_id}")
+@app.get("/api/recipes/{recipe_id}")
 def get_recipe(recipe_id: int):
     db = get_db()
     rows = db.table("Recipes").select("*").eq("id", recipe_id).execute().data
