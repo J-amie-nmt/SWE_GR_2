@@ -1,6 +1,7 @@
 // app/search/page.tsx
 'use client'
 import { useState } from 'react'
+
 import Link from 'next/link'
 
 interface RecipeSummary {
@@ -15,7 +16,7 @@ interface RecipeSummary {
   calories: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL
+const API_BASE = process.env.NEXT_PUBLIC_API_URL?? "http://localhost:8000"
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
@@ -25,6 +26,8 @@ export default function RecipesPage() {
 
 const handleSearch = async (e: React.FormEvent) => {
   e.preventDefault()
+  console.log("API_BASE:", API_BASE) 
+  console.log("FULL URL:", `${API_BASE}/api/recipes?q=${text}`) 
   if (!text.trim()) return
   setLoading(true)
   setSearched(true)
