@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+supabase
+requests
+beautifulsoup4
+lxml
+recipe-scrapers
