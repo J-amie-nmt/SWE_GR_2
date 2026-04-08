@@ -1,7 +1,6 @@
 // app/search/page.tsx
 'use client'
 import { useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
 interface RecipeSummary {
@@ -16,10 +15,7 @@ interface RecipeSummary {
   calories: string
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+const API_BASE = process.env.NEXT_PUBLIC_API_URL
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
@@ -33,13 +29,11 @@ const handleSearch = async (e: React.FormEvent) => {
   setLoading(true)
   setSearched(true)
   try {
-    const { data } = await supabase
-      .from('recipes')
-      .select('id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories')
-      .ilike('title', `%${text}%`)
-      .order('id', { ascending: false })
-      .limit(20)
-    setResults(data || [])
+    const res = await fetch(
+      `${API_BASE}/api/recipes?q=${encodeURIComponent(text)}&limit=20`
+    )
+    const data = await res.json()
+    setResults(data)
   } catch {
     setResults([])
   } finally {
