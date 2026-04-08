@@ -15,26 +15,39 @@ interface RecipeSummary {
   calories: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+const API_BASE = process.env.NEXT_PUBLIC_SUPABASE_URL
+if (!API_BASE) {
+  console.warn("NEXT_PUBLIC_SUPABASE_URL is not set — API calls will fail")
+}
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
   const [results, setResults] = useState<RecipeSummary[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!text.trim()) return
+    if (!API_BASE) {
+      setError("API URL is not configured. Please contact the site administrator.")
+      return
+    }
     setLoading(true)
     setSearched(true)
+    setError(null)
     try {
       const res = await fetch(
         `${API_BASE}/api/recipes?q=${encodeURIComponent(text)}&limit=20`
       )
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`)
+      }
       const data = await res.json()
       setResults(data)
-    } catch {
+    } catch (err) {
+      setError("Something went wrong. Please try again.")
       setResults([])
     } finally {
       setLoading(false)
@@ -60,6 +73,7 @@ export default function RecipesPage() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="e.g. 3 Onions, Vegetarian, Gluten-Free"
+          aria-label="Search recipes"
           style={{ flex: 1, borderRadius: "4px 0 0 4px", borderRight: "none" }}
         />
         <button
@@ -82,6 +96,12 @@ export default function RecipesPage() {
         </p>
       )}
 
+      {error && (
+        <p style={{ color: "red", fontSize: "0.95rem", marginBottom: 16 }}>
+          {error}
+        </p>
+      )}
+
       {loading && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -95,7 +115,7 @@ export default function RecipesPage() {
         </div>
       )}
 
-      {searched && !loading && results.length === 0 && (
+      {searched && !loading && !error && results.length === 0 && (
         <p style={{ color: "var(--ink-muted)", fontSize: "0.95rem" }}>
           No recipes found for <strong>"{text}"</strong>. Try different keywords.
         </p>
@@ -114,6 +134,7 @@ export default function RecipesPage() {
                 <img
                   src={r.image_url}
                   alt={r.title}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                   style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 4, marginBottom: 12 }}
                 />
               )}
@@ -122,7 +143,13 @@ export default function RecipesPage() {
                 {r.source_site}{r.total_time ? ` · ${r.total_time}` : ""}{r.cuisine ? ` · ${r.cuisine}` : ""}
               </p>
               {r.dietary_tags && (
-                <span className="pill" style={{ fontSize: "0.7rem" }}>{r.dietary_tags}</span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  {r.dietary_tags.split(",").map((tag) => (
+                    <span key={tag} className="pill" style={{ fontSize: "0.7rem" }}>
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
               )}
             </Link>
           ))}
