@@ -2,9 +2,7 @@
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
-import os, sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scraper'))
+import os
 from scraper_v2 import RecipeSearchScraper, list_recipes
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
