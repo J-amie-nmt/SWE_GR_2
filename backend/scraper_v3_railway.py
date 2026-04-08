@@ -168,11 +168,11 @@ def save_recipe(supabase: Client, recipe: Dict) -> bool:
     Insert a recipe. Skips duplicates by checking URL first.
     Returns True if inserted, False if duplicate.
     """
-    existing = supabase.table("recipes").select("id").eq("url", recipe["url"]).execute()
+    # FIX 1: consistent lowercase table name "recipes" everywhere
+    existing = supabase.table("Recipes").select("id").eq("url", recipe["url"]).execute()
     if existing.data:
         return False
 
-    # Map nutrient keys to match Supabase column names
     row = {
         "title":                   recipe.get("title"),
         "url":                     recipe.get("url"),
@@ -200,7 +200,7 @@ def save_recipe(supabase: Client, recipe: Dict) -> bool:
         "scraped_date":            recipe.get("scraped_date"),
     }
 
-    supabase.table("recipes").insert(row).execute()
+    supabase.table("Recipes").insert(row).execute()
     return True
 
 
@@ -214,7 +214,8 @@ def log_search(supabase: Client, query: str, sites: Optional[List[str]], results
 
 
 def list_recipes(supabase: Client, limit: int = 50):
-    rows = supabase.table("recipes") \
+    # FIX 1: consistent lowercase table name
+    rows = supabase.table("Recipes") \
         .select("id, title, source_site, cuisine, dietary_tags, scraped_date") \
         .order("id", desc=True) \
         .limit(limit) \
@@ -233,12 +234,13 @@ def list_recipes(supabase: Client, limit: int = 50):
             f"{str(r['cuisine'] or '')[:14]:<15} "
             f"{str(r['dietary_tags'] or '')[:30]}"
         )
-    total = supabase.table("recipes").select("id", count="exact").execute().count
+    total = supabase.table("Recipes").select("id", count="exact").execute().count
     print(f"\n  Showing {len(rows)} of {total} saved recipe(s).")
 
 
 def view_recipe(supabase: Client, recipe_id: int):
-    rows = supabase.table("recipes").select("*").eq("id", recipe_id).execute().data
+    # FIX 1: consistent lowercase table name
+    rows = supabase.table("Recipes").select("*").eq("id", recipe_id).execute().data
     if not rows:
         print(f"  No recipe with ID {recipe_id}.")
         return
@@ -389,7 +391,7 @@ class RecipeSearchScraper:
                 'cuisine':      self._safe_extract(scraper.cuisine) or '',
                 'category':     self._safe_extract(scraper.category) or '',
                 'ingredients':  ' | '.join(scraper.ingredients()),
-                'instructions': self._clean_instructions(self._safe_extract(scraper.instructions)),
+                'instructions': self._clean_instructions(scraper),
                 **self._extract_nutrients(scraper),
                 'dietary_tags': ', '.join(self._extract_dietary_tags(scraper)),
                 'source_site':  urlparse(url).netloc,
@@ -411,11 +413,35 @@ class RecipeSearchScraper:
             return ''
         return f"{time_val} minutes" if isinstance(time_val, int) else str(time_val)
 
-    def _clean_instructions(self, instructions: Optional[str]) -> str:
-        if not instructions:
-            return ''
-        cleaned = re.sub(r'\s+', ' ', instructions).replace('\n\n', ' | ').strip()
-        return cleaned[:2000] + '...' if len(cleaned) > 2000 else cleaned
+    def _clean_instructions(self, scraper) -> str:
+        """
+        FIX 2: Try to get instructions as a list first (preserves step boundaries),
+        then fall back to the raw string. Normalizes all newline variants to ' | '
+        so the API can reliably split on it.
+        """
+        # Try list form first — recipe-scrapers exposes instructions_list() on many scrapers
+        steps: List[str] = []
+        try:
+            steps = scraper.instructions_list()
+        except Exception:
+            pass
+
+        if steps:
+            cleaned_steps = [re.sub(r'\s+', ' ', s).strip() for s in steps if s.strip()]
+            joined = ' | '.join(cleaned_steps)
+        else:
+            # Fall back to raw string and split on newlines
+            try:
+                raw = scraper.instructions() or ''
+            except Exception:
+                return ''
+            # Normalize any run of newlines/whitespace-only lines into our separator
+            joined = re.sub(r'\n+', ' | ', raw.strip())
+            joined = re.sub(r'\s+', ' ', joined).strip()
+            # Collapse accidental double separators
+            joined = re.sub(r'(\s*\|\s*){2,}', ' | ', joined)
+
+        return joined[:2000] + '...' if len(joined) > 2000 else joined
 
     def _extract_nutrients(self, scraper) -> Dict[str, str]:
         result = {k: '' for k in self.NUTRIENT_KEYS}

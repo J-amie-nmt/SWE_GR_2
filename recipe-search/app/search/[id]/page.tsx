@@ -1,10 +1,10 @@
-// app/recipes/[id]/page.tsx
+// app/search/[id]/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
-interface RecipeDetail { //Current flags pulled from webscraper. Want to add more in future such as nationalities or other dietary restrictions
+interface RecipeDetail {
   id: number
   title: string
   source_site: string
@@ -27,34 +27,44 @@ interface RecipeDetail { //Current flags pulled from webscraper. Want to add mor
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
-
 export default function RecipeDetailPage() {
-  const { id } = useParams()
+  const params = useParams()
+  const id = Array.isArray(params.id) ? params.id[0] : params.id
+
   const [recipe, setRecipe] = useState<RecipeDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/Recipes/${id}`)
+    if (!id) return
+
+    const controller = new AbortController()
+
+    fetch(`${API_BASE}/api/recipes/${id}`, { signal: controller.signal })
       .then((res) => {
-        if (!res.ok) throw new Error()
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
       })
       .then((data) => {
+        data.ingredients = Array.isArray(data.ingredients) ? data.ingredients : []
+        data.instructions = Array.isArray(data.instructions) ? data.instructions : []
         setRecipe(data)
         setLoading(false)
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err.name === 'AbortError') return
         setError(true)
         setLoading(false)
       })
+
+    return () => controller.abort()
   }, [id])
 
   if (loading) return (
     <div className="page-content fade-up">
       <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 700 }}>
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} style={{ height: i === 1 ? 320 : 16, borderRadius: 4, background: "var(--border)", opacity: 0.4 }} />
+        {[320, 20, 16, 16, 16].map((h, i) => (
+          <div key={i} style={{ height: h, borderRadius: 4, background: "var(--border)", opacity: 0.4 }} />
         ))}
       </div>
     </div>
@@ -63,7 +73,10 @@ export default function RecipeDetailPage() {
   if (error || !recipe) return (
     <div className="page-content fade-up">
       <p style={{ color: "var(--ink-muted)" }}>Recipe not found.</p>
-      <Link href="/recipes" className="btn" style={{ marginTop: 16, display: "inline-block" }}>Back to Search</Link>
+      {/* FIX: back link goes to /search not /recipes */}
+      <Link href="/search" className="btn" style={{ marginTop: 16, display: "inline-block" }}>
+        Back to Search
+      </Link>
     </div>
   )
 
@@ -78,39 +91,36 @@ export default function RecipeDetailPage() {
   return (
     <div className="page-content fade-up" style={{ maxWidth: 740 }}>
 
-      {/* back */}
-      <Link href="/recipes" style={{ fontSize: "0.85rem", color: "var(--ink-muted)", textDecoration: "none", display: "inline-block", marginBottom: 24 }}>
+      {/* FIX: back link goes to /search not /recipes */}
+      <Link href="/search" style={{ fontSize: "0.85rem", color: "var(--ink-muted)", textDecoration: "none", display: "inline-block", marginBottom: 24 }}>
         ← Back to Search
       </Link>
 
-      {/* image */}
       {recipe.image_url && (
         <img
           src={recipe.image_url}
           alt={recipe.title}
           style={{ width: "100%", maxHeight: 340, objectFit: "cover", borderRadius: 8, marginBottom: 28 }}
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
         />
       )}
 
-      {/* title */}
       <span className="section-label">{recipe.source_site}</span>
       <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: "clamp(1.6rem, 4vw, 2.4rem)", marginTop: 8, marginBottom: 12 }}>
         {recipe.title}
       </h1>
 
-      {/* pills */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
         {recipe.total_time && <span className="pill">{recipe.total_time}</span>}
         {recipe.yields && <span className="pill">{recipe.yields}</span>}
         {recipe.cuisine && <span className="pill">{recipe.cuisine}</span>}
-        {recipe.dietary_tags && recipe.dietary_tags.split(',').map((t) => (
+        {recipe.dietary_tags?.split(',').map((t) => (
           <span key={t} className="pill">{t.trim()}</span>
         ))}
       </div>
 
       <hr className="divider" style={{ marginBottom: 36 }} />
 
-      {/* nutriton */}
       {nutrients.length > 0 && (
         <>
           <span className="section-label" style={{ marginBottom: 12, display: "block" }}>Nutrition</span>
@@ -127,25 +137,30 @@ export default function RecipeDetailPage() {
         </>
       )}
 
-      {/* ingredients */}
       <span className="section-label" style={{ marginBottom: 12, display: "block" }}>Ingredients</span>
-      <ul style={{ paddingLeft: 20, marginBottom: 36 }}>
-        {recipe.ingredients.map((ing, i) => (
-          <li key={i} style={{ marginBottom: 6, fontSize: "0.93rem" }}>{ing}</li>
-        ))}
-      </ul>
+      {recipe.ingredients.length > 0 ? (
+        <ul style={{ paddingLeft: 20, marginBottom: 36 }}>
+          {recipe.ingredients.map((ing, i) => (
+            <li key={i} style={{ marginBottom: 6, fontSize: "0.93rem" }}>{ing}</li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ color: "var(--ink-muted)", marginBottom: 36 }}>No ingredients available.</p>
+      )}
 
       <hr className="divider" style={{ marginBottom: 36 }} />
 
-      {/* instructions */}
       <span className="section-label" style={{ marginBottom: 12, display: "block" }}>Instructions</span>
-      <ol style={{ paddingLeft: 20, marginBottom: 36 }}>
-        {recipe.instructions.map((step, i) => (
-          <li key={i} style={{ marginBottom: 12, fontSize: "0.93rem", lineHeight: 1.6 }}>{step}</li>
-        ))}
-      </ol>
+      {recipe.instructions.length > 0 ? (
+        <ol style={{ paddingLeft: 20, marginBottom: 36 }}>
+          {recipe.instructions.map((step, i) => (
+            <li key={i} style={{ marginBottom: 12, fontSize: "0.93rem", lineHeight: 1.6 }}>{step}</li>
+          ))}
+        </ol>
+      ) : (
+        <p style={{ color: "var(--ink-muted)", marginBottom: 36 }}>No instructions available.</p>
+      )}
 
-      {/* original link K */}
       <a href={recipe.url} target="_blank" rel="noopener noreferrer" className="btn">
         View Original Recipe ↗
       </a>
