@@ -29,7 +29,7 @@ def get_db() -> Client:
 @app.get("/api/recipes")
 def search_recipes(q: str = "", limit: int = 20):
     db = get_db()
-    query = db.table("recipes") \
+    query = db.table("Recipes") \
         .select("id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories")
     
     if q:
@@ -42,10 +42,10 @@ def search_recipes(q: str = "", limit: int = 20):
 
 
 # --- GET /api/recipes/:id ---
-@app.get("/api/recipes/{recipe_id}")
+@app.get("/api/Recipes/{recipe_id}")
 def get_recipe(recipe_id: int):
     db = get_db()
-    rows = db.table("recipes").select("*").eq("id", recipe_id).execute().data
+    rows = db.table("Recipes").select("*").eq("id", recipe_id).execute().data
     if not rows:
         return {"error": "Not found"}
     r = rows[0]
