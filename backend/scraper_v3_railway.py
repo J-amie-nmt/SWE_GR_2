@@ -4,7 +4,7 @@ Recipe Search & Scraper
 Searches for recipes across multiple websites and stores data in Supabase.
 
 Usage (interactive):
-    python scraper_v2.py
+    python3 scraper_v3_railway.py
 
 Dependencies:
     pip install recipe-scrapers beautifulsoup4 requests lxml supabase
@@ -27,13 +27,15 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")  # use service role key for scraper
-
+DEFAULT_SITES_FILE = "website-recipe-list.txt"
 
 # ═══════════════════════════════════════════════════════════════
 #  SITE LIST
 # ═══════════════════════════════════════════════════════════════
 
-all_recipes_sites = [
+# Fallback list of recipe websites
+# (in case load function fails / file is not found)
+DEFAULT_RECIPE_SITES = [
     '101cookbooks.com', 'acouplecooks.com', 'acozykitchen.com', 'addapinch.com',
     'africanbites.com', 'alexandracooks.com', 'allrecipes.com', 'allthehealthythings.com',
     'altonbrown.com', 'ambitiouskitchen.com', 'americastestkitchen.com',
@@ -65,6 +67,27 @@ all_recipes_sites = [
     'thespruceeats.com', 'thewoksoflife.com', 'twopeasandtheirpod.com',
     'wellplated.com', 'whatsgabycooking.com', 'wholefoodsmarket.com', 'yummly.com',
 ]
+
+def load_recipe_sites(filepath: str = DEFAULT_SITES_FILE) -> List[str]:
+    """
+    Load recipe site list from a plain-text file (one domain per line).
+    Lines starting with '#' are treated as comments and ignored.
+    """
+    if not os.path.exists(filepath):
+        return DEFAULT_RECIPE_SITES
+
+    sites = []
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                sites.append(line)
+
+    if not sites:
+        return DEFAULT_RECIPE_SITES
+
+    print(f"Loaded {len(sites)} sites from '{filepath}'")
+    return sites
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -335,7 +358,7 @@ class RecipeSearchScraper:
             return []
 
         soup = BeautifulSoup(response.text, 'html.parser')
-        urls: List[str] = []
+        urls: List[str] = load_recipe_sites()
         for link in soup.find_all('a', href=True):
             href = link['href']
             if href.startswith('/'):
@@ -360,7 +383,7 @@ class RecipeSearchScraper:
         max_workers: int = 10,
         per_site_limit: int = 6,
     ) -> List[str]:
-        target_sites = sites if sites is not None else all_recipes_sites
+        target_sites = sites if sites is not None else DEFAULT_RECIPE_SITES
         print(f"\n🔍 Searching {len(target_sites)} recipe site(s) for: '{query}'")
         recipe_urls: List[str] = []
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -579,7 +602,7 @@ if __name__ == "__main__":
 
             print("\nSearch scope:  [1] All sites (default)   [2] Specific sites")
             scope = input("Choice [1/2]: ").strip() or "1"
-            sites = None
+            sites = load_recipe_sites()
             if scope == "2":
                 raw = input("Sites (comma-separated, e.g. allrecipes.com,food.com): ").strip()
                 sites = [s.strip() for s in raw.split(",") if s.strip()] or None
