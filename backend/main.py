@@ -64,7 +64,56 @@ def get_recipe(recipe_id: int):
     r["ingredients"] = [i for i in (r.get("ingredients") or "").split(" | ") if i.strip()]
     r["instructions"] = [i for i in (r.get("instructions") or "").split(" | ") if i.strip()]
     return r
+from pydantic import BaseModel
 
+class SaveRecipeBody(BaseModel):
+    user_email: str
+    recipe_id: int
+    title: str | None = None
+    source_site: str | None = None
+    image_url: str | None = None
+    total_time: str | None = None
+    cuisine: str | None = None
+    dietary_tags: str | None = None
+
+# --- GET /api/recipes/saved?email=user@email.com ---
+@app.get("/api/saved")
+def get_saved_recipes(email: str):
+    db = get_db()
+    rows = db.table("saved_recipes") \
+        .select("*") \
+        .eq("user_email", email) \
+        .order("saved_at", desc=True) \
+        .execute().data
+    return rows
+
+# --- POST /api/saved ---
+@app.post("/api/saved")
+def save_recipe_for_user(body: SaveRecipeBody):
+    db = get_db()
+    # upsert so double-clicking save doesn't error
+    db.table("saved_recipes").upsert({
+        "user_email":  body.user_email,
+        "recipe_id":   body.recipe_id,
+        "title":       body.title,
+        "source_site": body.source_site,
+        "image_url":   body.image_url,
+        "total_time":  body.total_time,
+        "cuisine":     body.cuisine,
+        "dietary_tags": body.dietary_tags,
+    }, on_conflict="user_email,recipe_id").execute()
+    return {"status": "saved"}
+
+# --- DELETE /api/saved ---
+@app.delete("/api/saved")
+def unsave_recipe_for_user(body: SaveRecipeBody):
+    db = get_db()
+    db.table("saved_recipes") \
+        .delete() \
+        .eq("user_email", body.user_email) \
+        .eq("recipe_id",  body.recipe_id) \
+        .execute()
+    return {"status": "removed"}
 
 # --- POST /api/scrape  body: { "query": "pasta", "num_results": 10 } ---
 def run_scrape(query: str, num_results: int):

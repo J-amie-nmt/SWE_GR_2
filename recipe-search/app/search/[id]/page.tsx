@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 interface RecipeDetail {
   id: number
@@ -34,12 +35,13 @@ export default function RecipeDetailPage() {
   const [recipe, setRecipe] = useState<RecipeDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const { data: session } = useSession()
+  const [saved, setSaved] = useState(false)
+  const [saveLoading, setSaveLoading] = useState(false)
 
   useEffect(() => {
     if (!id) return
-
     const controller = new AbortController()
-
     fetch(`${API_BASE}/api/recipes/${id}`, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -56,9 +58,45 @@ export default function RecipeDetailPage() {
         setError(true)
         setLoading(false)
       })
-
     return () => controller.abort()
   }, [id])
+
+  useEffect(() => {
+    if (!session?.user?.email || !recipe) return
+    fetch(`${API_BASE}/api/saved?email=${encodeURIComponent(session.user.email)}`)
+      .then(r => r.json())
+      .then((list: { recipe_id: number }[]) => {
+        setSaved(list.some(s => s.recipe_id === recipe.id))
+      })
+      .catch(() => {})
+  }, [recipe, session])
+
+  const handleSave = async () => {
+    if (!session?.user?.email || !recipe) return
+    setSaveLoading(true)
+    const method = saved ? 'DELETE' : 'POST'
+    try {
+      await fetch(`${API_BASE}/api/saved`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_email:   session.user.email,
+          recipe_id:    recipe.id,
+          title:        recipe.title,
+          source_site:  recipe.source_site,
+          image_url:    recipe.image_url,
+          total_time:   recipe.total_time,
+          cuisine:      recipe.cuisine,
+          dietary_tags: recipe.dietary_tags,
+        }),
+      })
+      setSaved(!saved)
+    } catch {
+      // optionally add a toast/error message here
+    } finally {
+      setSaveLoading(false)
+    }
+  }
 
   if (loading) return (
     <div className="page-content fade-up">
@@ -73,7 +111,6 @@ export default function RecipeDetailPage() {
   if (error || !recipe) return (
     <div className="page-content fade-up">
       <p style={{ color: "var(--ink-muted)" }}>Recipe not found.</p>
-      {/* FIX: back link goes to /search not /recipes */}
       <Link href="/search" className="btn" style={{ marginTop: 16, display: "inline-block" }}>
         Back to Search
       </Link>
@@ -91,10 +128,22 @@ export default function RecipeDetailPage() {
   return (
     <div className="page-content fade-up" style={{ maxWidth: 740 }}>
 
-      {/* FIX: back link goes to /search not /recipes */}
-      <Link href="/search" style={{ fontSize: "0.85rem", color: "var(--ink-muted)", textDecoration: "none", display: "inline-block", marginBottom: 24 }}>
-        ← Back to Search
-      </Link>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+        <Link href="/search" style={{ fontSize: "0.85rem", color: "var(--ink-muted)", textDecoration: "none" }}>
+          ← Back to Search
+        </Link>
+
+        {session && (
+          <button
+            onClick={handleSave}
+            disabled={saveLoading}
+            className="btn btn-outline"
+            style={{ fontSize: "0.85rem", padding: "6px 14px" }}
+          >
+            {saveLoading ? "..." : saved ? "♥ Saved" : "♡ Save Recipe"}
+          </button>
+        )}
+      </div>
 
       {recipe.image_url && (
         <img

@@ -1,12 +1,18 @@
-//Home page
-import { useEffect, useState } from 'react'
-import { supabase } from './supabaseClient'
+// app/page.tsx
 'use client'
-const SITE_NAME = "Dr.Dans's Cookbook"
+import { useEffect, useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+const SITE_NAME = "Dr.Dan's Cookbook"
 
 const HERO = {
   tagline: "Find recipes based on basic searches",
-  description: "If you have ever found yourself trying to find something to do with a random assortment of ingredients this website is for you. Using our webscraper we compiled a various recipe catalog that you can search with a wide variety of filters. ",
+  description: "If you have ever found yourself trying to find something to do with a random assortment of ingredients this website is for you. Using our webscraper we compiled a various recipe catalog that you can search with a wide variety of filters.",
   ctaText: "Search Recipes Quickly",
   ctaLink: "/search",
 }
@@ -14,61 +20,36 @@ const HERO = {
 const ABOUT = {
   heading: "About This Website",
   paragraphs: [
-    "This website was made by a group of software engineers who were trying to make a website that will store various recipe types while allowing users to search for them based on certain qualities of the dish. This website was created in Next.js and the front end devs designed and stylized most of the features. If you would like to find out more about the developers we have an about page link at the top of the website :) ",
+    "This website was made by a group of software engineers who were trying to make a website that will store various recipe types while allowing users to search for them based on certain qualities of the dish. This website was created in Next.js and the front end devs designed and stylized most of the features. If you would like to find out more about the developers we have an about page link at the top of the website :)",
     "Our future plans for the website include pushing it to be hosted by vercel. When hosted by vercel we plan to create a flask server that will run our database interpreter and our webscraper that pulls recipes. We also plan to move our database to supabase.",
   ],
 }
-export default function LastIdComponent() {
-  const [lastId, setLastId] = useState<number | null>(null);
+
+export default function Home() {
+  const [recipeCount, setRecipeCount] = useState<number | null>(null)
+  const [scrapeCount, setScrapeCount] = useState<number | null>(null)
 
   useEffect(() => {
-    async function fetchLastId() {
-      const { data, error } = await supabase
-        .from('Recipes')
-        .select('id')
-        .order('id', { ascending: false })
-        .limit(1)
-        .single(); 
-      if (error) {
-        console.error('Error fetching last ID:', error);
-      } else if (data) {
-        setLastId(data.id);
-      }
-    }
+    // Total recipes
+    supabase
+      .from('Recipes')
+      .select('id', { count: 'exact', head: true })
+      .then(({ count }) => setRecipeCount(count))
 
-    fetchLastId();
-  }, []);
-  
-export default function LastIdComponent1() {
-  const [lastId1, setLastId1] = useState<number | null>(null);
-  useEffect(() => {
-    async function fetchLastId() {
-      const { data, error } = await supabase
-        .from('search_log')
-        .select('id')
-        .order('id', { ascending: false })
-        .limit(1)
-        .single(); 
-      if (error) {
-        console.error('Error fetching last ID:', error);
-      } else if (data) {
-        setLastId1(data.id);
-      }
-    }
-
-    fetchLastId1();
-  }, []);
-
-export default async function Home() {
-
+    // Total scrapes run
+    supabase
+      .from('search_log')
+      .select('id', { count: 'exact', head: true })
+      .then(({ count }) => setScrapeCount(count))
+  }, [])
 
   const STATS = [
-    { number: return <div>{lastID}</div> *stats.total_recipes*/, label: "Recipes in the catalog" },
-    { number: 120, label: "Recipe sites scraped" },
-    { number: 3, label: "Number of scrapes run" },
+    { number: recipeCount ?? '...', label: "Recipes in the catalog" },
+    { number: 120,                  label: "Recipe sites scraped" },
+    { number: scrapeCount ?? '...', label: "Number of scrapes run" },
   ]
-  return (
 
+  return (
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
 
       {/* HERO */}
@@ -77,7 +58,6 @@ export default async function Home() {
         padding: "100px 32px 80px",
         textAlign: "center",
       }}>
-
         <h1 style={{
           fontFamily: "'Fraunces', serif",
           fontSize: "clamp(2.4rem, 5vw, 4rem)",
