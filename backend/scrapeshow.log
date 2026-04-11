@@ -158,4 +158,583 @@ Compressing objects:  16% (1/6)Compressing objects:  33% (2/6)Compressing obje
 Writing objects:  14% (1/7)Writing objects:  28% (2/7)Writing objects:  42% (3/7)Writing objects:  57% (4/7)Writing objects:  71% (5/7)Writing objects:  85% (6/7)Writing objects: 100% (7/7)Writing objects: 100% (7/7), 3.11 KiB | 3.11 MiB/s, done.
 Total 7 (delta 3), reused 0 (delta 0), pack-reused 0
 remote: Resolving deltas:   0% (0/3)[Kremote: Resolving deltas:  33% (1/3)[Kremote: Resolving deltas:  66% (2/3)[Kremote: Resolving deltas: 100% (3/3)[Kremote: Resolving deltas: 100% (3/3), completed with 3 local objects.[K
-To github.com:tcoull38/drdanc
+To github.com:tcoull38/drdancookbook.git
+   b06111a..f65dde3  main -> main
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook[00m$ git pushcommit -m "huzzah?"add .[Kls[K;scd ..git pushcommit -m "something2"[A]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook[00m$ [C[C[C[Cadd . [K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccommit -m "something2"[A]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook[00m$ [C[C[C[Cadd . [K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1Ppush[Ccommit -m "something" [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cpush [K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1@add .[Ccommit -m "something2"[A]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook[00m$ [C[C[C[Cadd . [K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccommit -m "something2"[A]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook[00m$ [C[C[C[Cpush[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[3Pcd ..[3P;slsgit add .commit -m "huzzah?"push[K[Kls
+[?2004lAI_Code.txt  [0m[01;34mbackend[0m  README.md  [01;34mrecipe-search[0m  requirements.txt  [01;34mscraper[0m
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook[00m$ cd backend
+[?2004l[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ ls
+[?2004lmain.py      requirements.txt  scraper_v3_railway.py
+[0m[01;34m__pycache__[0m  scraper_v2.py     scrapeshow.log
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ pth[K[K[Kpython3 scr[K[K[Kscraper_v 4[K3_railway.py
+[?2004l============================================================
+🍳 RECIPE SEARCH & SCRAPER  (Supabase edition)
+============================================================
+  ✅ Connected to Supabase
+
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: 1
+Search query: Zot  iti
+
+Search scope:  [1] All sites (default)   [2] Specific sites
+Choice [1/2]: 
+Max recipes to scrape [blank = all found]: 
+Delay between requests in seconds [default 1.5]: 
+
+🔍 Searching 110 recipe site(s) for: 'Ziti'
+    ✓ americastestkitchen.com: 6 recipe(s)
+    ✓ bettycrocker.com: 5 recipe(s)
+    ✓ chefkoch.de: 6 recipe(s)
+    ✓ bonappetit.com: 6 recipe(s)
+    ✓ cdkitchen.com: 3 recipe(s)
+    ✓ marmiton.org: 6 recipe(s)
+  ℹ️  19 site(s) blocked/paywalled (skipped)
+✓ Found 32 unique recipe URL(s)
+
+📥 Scraping 32 recipe(s)...
+  [1/32] https://www.americastestkitchen.com/recipes/4662-baked-ziti
+  ✓ Baked Ziti
+  [2/32] https://www.americastestkitchen.com/recipes/8607-one-pot-baked-ziti-with-sausage-and-spinach
+  ✓ One-Pot Baked Ziti with Sausage and Spinach
+  [3/32] https://www.americastestkitchen.com/recipes/2146-baked-ziti-with-sausage
+  ✓ Baked Ziti with Sausage
+  [4/32] https://www.americastestkitchen.com/recipes/3989-skillet-baked-ziti
+  ✓ Skillet Baked Ziti
+  [5/32] https://www.americastestkitchen.com/recipes/6472-baked-ziti-with-sausage-and-peppers
+  ✓ Skillet Baked Ziti with Sausage and Peppers
+  [6/32] https://www.americastestkitchen.com/recipes/17384-baked-ziti-with-creamy-leeks-kale-and-sun-dried-tomatoes
+  ✓ Baked Ziti with Creamy Leeks, Kale, and Sun-Dried Tomatoes
+  [7/32] https://www.bettycrocker.com/recipes/homemade-chocolate-chip-cookies/77c14e03-d8b0-4844-846d-f19304f61c57
+  ✓ Homemade Chocolate Chip Cookies
+  [8/32] https://www.bettycrocker.com/recipes/easy-pineapple-upside-down-cake/c4d3321d-fad9-41cb-8f29-8d91a4279b07
+  ✓ Easy Pineapple Upside-Down Cake
+  [9/32] https://www.bettycrocker.com/recipes/vanilla-buttercream-frosting/39107a19-be94-4571-9031-f1fc5bd1d606
+  ✓ Vanilla Buttercream Frosting
+  [10/32] https://www.bettycrocker.com/recipes/simple-meatball-recipe/2959910f-1b27-438a-9085-d40b1950db20
+  ✓ Simple Meatballs
+  [11/32] https://www.bettycrocker.com/recipes/stuffed-peppers/63e29e18-903e-467c-aec5-fba4ce3a138f
+  ✓ Stuffed Peppers
+  [12/32] https://www.chefkoch.de/rezepte/3349861497858156/Ziti-al-Forno-stile-Soprano.html
+  ✓ Ziti al Forno stile Soprano von Lala0904
+  [13/32] https://www.chefkoch.de/rezepte/1834091297417228/Pasticcio-oder-Pastitsio.html
+  ✓ Pasticcio oder Pastitsio von falfala
+  [14/32] https://www.chefkoch.de/rezepte/3628341545938842/Pasta-alla-Genovese-Napoletana.html
+  ✓ Pasta alla Genovese Napoletana von MoepMe
+  [15/32] https://www.chefkoch.de/rezepte/2489291391448387/Susys-geschmorte-Artischocken.html
+  ✓ Susys geschmorte Artischocken von _Susy_
+  [16/32] https://www.chefkoch.de/rezepte/2015601326456162/Nudeln-mit-Zucchini-und-Garnelen.html
+  ✓ Nudeln mit Zucchini und Garnelen von milz-alfred
+  [17/32] https://www.chefkoch.de/rezepte/4163811665383754/Fischbuletten-Pak-Choi-und-Zitronenkefir.html
+  ✗ Failed to scrape https://www.chefkoch.de/rezepte/4163811665383754/Fischbuletten-Pak-Choi-und-Zitronenkefir.html: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.chefkoch.de/rezepte/4163811665383754/Fischbuletten-Pak-Choi-und-Zitronenkefir.html.
+  [18/32] https://www.bonappetit.com/recipe/baked-ziti
+  ✓ BA's Best Baked Ziti
+  [19/32] https://www.bonappetit.com/recipe/baked-pasta-with-merguez-and-harissa-spiked-sauce
+  ✓ Baked Pasta with Merguez and Harissa-Spiked Sauce
+  [20/32] https://www.bonappetit.com/recipe/ziti-with-skillet-roasted-root-vegetables
+  ✓ Ziti with Skillet-Roasted Root Vegetables
+  [21/32] https://www.bonappetit.com/recipe/ziti-with-roasted-zucchini
+  ✓ Ziti with Roasted Zucchini
+  [22/32] https://www.bonappetit.com/recipe/baked-ziti-with-spicy-pork-and-sausage-ragu
+  ✓ Baked Ziti with Spicy Pork and Sausage Ragu
+  [23/32] https://www.bonappetit.com/recipe/ziti-with-roasted-peppers-green-olives-and-spicy-salami
+  ✓ Ziti with Roasted Peppers, Green Olives, and Spicy Salami
+  [24/32] https://www.cdkitchen.com/recipes/copy-cat-recipes
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/copy-cat-recipes: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/copy-cat-recipes.
+  [25/32] https://www.cdkitchen.com/recipes/course
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/course: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/course.
+  [26/32] https://www.cdkitchen.com/recipes/holidays-parties
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/holidays-parties: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/holidays-parties.
+  [27/32] https://www.marmiton.org/recettes/recette_tajine-zitoune-algerois_343476.aspx
+  ✓ Tajine zitoune algérois
+  [28/32] https://www.marmiton.org/recettes/recette_tarte-aux-pommes-fondantes-et-cremeuses-facon-ziris_61228.aspx
+  ✓ Tarte aux pommes fondantes et crémeuses façon Ziris
+  [29/32] https://www.marmiton.org/recettes/recette_zizi-coincoin_228614.aspx
+  ✓ Zizi coincoin (cocktail belge)
+  [30/32] https://www.marmiton.org/recettes/recette_zizi-coincoin_48406.aspx
+  ✓ Zizi coincoin
+  [31/32] https://www.marmiton.org/recettes/recette_le-zizi-coin-coin_80843.aspx
+  ✓ Le zizi coin coin
+  [32/32] https://www.marmiton.org/recettes/recette_fars-pitilig-far-a-la-poele_25716.aspx
+  ✓ Fars pitilig (far à la poêle)
+
+✓ Scraped 28/32 successfully
+
+💾 Saved 23 new recipe(s) to Supabase  (5 duplicate(s) skipped)
+
+✅  Done!  23 recipe(s) saved.
+
+Return to menu? [Y/n]: n
+Bye!
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ python3 scraper_v3_railway.py
+[?2004l============================================================
+🍳 RECIPE SEARCH & SCRAPER  (Supabase edition)
+============================================================
+  ✅ Connected to Supabase
+
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: 1
+Search query: Watermelon
+
+Search scope:  [1] All sites (default)   [2] Specific sites
+Choice [1/2]: 
+Max recipes to scrape [blank = all found]: 
+Delay between requests in seconds [default 1.5]: 
+
+🔍 Searching 110 recipe site(s) for: 'Watermelon'
+
+    ✓ americastestkitchen.com: 6 recipe(s)
+    ✓ bbcgoodfood.com: 6 recipe(s)
+    ✓ bettycrocker.com: 5 recipe(s)
+    ✓ chefkoch.de: 6 recipe(s)
+    ✓ cdkitchen.com: 3 recipe(s)
+    ✓ bonappetit.com: 6 recipe(s)
+    ✓ marmiton.org: 6 recipe(s)
+  ℹ️  19 site(s) blocked/paywalled (skipped)
+✓ Found 38 unique recipe URL(s)
+
+📥 Scraping 38 recipe(s)...
+  [1/38] https://www.americastestkitchen.com/recipes/11727-watermelon-lime-agua-fresca
+  ✓ Watermelon-Lime Agua Fresca
+  [2/38] https://www.americastestkitchen.com/recipes/2261-watermelon-citrus-punch
+  ✓ Watermelon Citrus Punch
+  [3/38] https://www.americastestkitchen.com/recipes/15528-watermelon-gazpacho-smoothie
+  ✓ Watermelon Gazpacho Smoothie
+  [4/38] https://www.americastestkitchen.com/recipes/9675-pineapple-watermelon-salsa
+  ✓ Pineapple-Watermelon Salsa
+  [5/38] https://www.americastestkitchen.com/recipes/8006-watermelon-salad
+  ✓ Watermelon Salad
+  [6/38] https://www.americastestkitchen.com/recipes/12836-watermelon-salad-with-cotija-and-serrano-chiles
+  ✓ Watermelon Salad with Cotija and Serrano Chiles
+  [7/38] https://www.bbcgoodfood.com/recipes/watermelon-feta-salad
+  ✓ Watermelon & feta salad
+  [8/38] https://www.bbcgoodfood.com/recipes/watermelon-smoothie
+  ✓ Watermelon smoothie
+  [9/38] https://www.bbcgoodfood.com/recipes/spicy-cucumber-watermelon-salad
+  ✓ Spicy cucumber & watermelon salad
+  [10/38] https://www.bbcgoodfood.com/recipes/hwachae-korean-watermelon-punch
+  ✓ Hwachae (Korean watermelon punch)
+  [11/38] https://www.bbcgoodfood.com/recipes/watermelon-lemonade
+  ✓ Watermelon lemonade
+  [12/38] https://www.bbcgoodfood.com/recipes/watermelon-spinach-super-salad
+  ✓ Watermelon & spinach super salad
+  [13/38] https://www.bettycrocker.com/recipes/homemade-chocolate-chip-cookies/77c14e03-d8b0-4844-846d-f19304f61c57
+  ✓ Homemade Chocolate Chip Cookies
+  [14/38] https://www.bettycrocker.com/recipes/easy-pineapple-upside-down-cake/c4d3321d-fad9-41cb-8f29-8d91a4279b07
+  ✓ Easy Pineapple Upside-Down Cake
+  [15/38] https://www.bettycrocker.com/recipes/vanilla-buttercream-frosting/39107a19-be94-4571-9031-f1fc5bd1d606
+  ✓ Vanilla Buttercream Frosting
+  [16/38] https://www.bettycrocker.com/recipes/simple-meatball-recipe/2959910f-1b27-438a-9085-d40b1950db20
+  ✓ Simple Meatballs
+  [17/38] https://www.bettycrocker.com/recipes/stuffed-peppers/63e29e18-903e-467c-aec5-fba4ce3a138f
+  ✓ Stuffed Peppers
+  [18/38] https://www.chefkoch.de/rezepte/4223671683707874/Gurken-Wassermelonen-Salat-mit-Halloumi.html
+  ✗ Failed to scrape https://www.chefkoch.de/rezepte/4223671683707874/Gurken-Wassermelonen-Salat-mit-Halloumi.html: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.chefkoch.de/rezepte/4223671683707874/Gurken-Wassermelonen-Salat-mit-Halloumi.html.
+  [19/38] https://www.chefkoch.de/rezepte/1709571279803920/Watermelon-Man.html
+  ✓ Watermelon Man von Cyn3x
+  [20/38] https://www.chefkoch.de/rezepte/2842481436277841/Watermelon-Splash.html
+  ✓ Watermelon-Splash von Gartenliebe
+  [21/38] https://www.chefkoch.de/rezepte/1458121250758398/Watermelon-Man.html
+  ✓ Watermelon Man von Haris_Pilton
+  [22/38] https://www.chefkoch.de/rezepte/91941036056007/Frozen-Watermelon-Martinis.html
+  ✓ Frozen Watermelon Martinis von mummzie80
+  [23/38] https://www.chefkoch.de/rezepte/2636761414159099/Watermelon-Fizz.html
+  ✓ Watermelon Fizz von Ella-jummy
+  [24/38] https://www.cdkitchen.com/recipes/copy-cat-recipes
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/copy-cat-recipes: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/copy-cat-recipes.
+  [25/38] https://www.cdkitchen.com/recipes/course
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/course: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/course.
+  [26/38] https://www.cdkitchen.com/recipes/holidays-parties
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/holidays-parties: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/holidays-parties.
+  [27/38] https://www.bonappetit.com/recipe/watermelon-with-lime-dressing-and-peanuts
+  ✓ Watermelon With Lime Dressing and Peanuts
+  [28/38] https://www.bonappetit.com/recipe/watermelon-gazpacho-with-feta-crema
+  ✓ Watermelon Gazpacho With Feta Crema
+  [29/38] https://www.bonappetit.com/recipe/watermelon-cucumber-slushy
+  ✓ Watermelon Cucumber Slushy
+  [30/38] https://www.bonappetit.com/recipe/hot-pink-punch
+  ✓ Hot Pink Punch
+  [31/38] https://www.bonappetit.com/recipe/salted-watermelon-juice
+  ✓ Salted Watermelon Juice
+  [32/38] https://www.bonappetit.com/recipe/spicy-watermelon-onigiri
+  ✓ Spicy Watermelon Onigiri
+  [33/38] https://www.marmiton.org/recettes/recette_pasteque-grillee-au-barbecue-smoked-watermelon-ham_531378.aspx
+  ✓ Pastèque grillée au barbecue (Smoked watermelon ham)
+  [34/38] https://www.marmiton.org/recettes/recette_spaghetti-bolognaise_19840.aspx
+  ✓ Spaghetti bolognaise
+  [35/38] https://www.marmiton.org/recettes/recette_boeuf-bourguignon_18889.aspx
+  ✓ Boeuf bourguignon : la vraie recette
+  [36/38] https://www.marmiton.org/recettes/recette_navarin-d-agneau_48254.aspx
+  ✓ Navarin d'agneau
+  [37/38] https://www.marmiton.org/recettes/recette_paris-brest-genereux_19927.aspx
+  ✓ Paris-Brest généreux
+  [38/38] https://www.marmiton.org/recettes/recette_cake-a-la-banane-banana-bread-usa_12042.aspx
+  ✓ Cake à la banane / banana bread (USA)
+
+✓ Scraped 34/38 successfully
+
+💾 Saved 28 new recipe(s) to Supabase  (6 duplicate(s) skipped)
+
+✅  Done!  28 recipe(s) saved.
+
+Return to menu? [Y/n]: 
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: q
+Bye!
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ ls
+[?2004lmain.py      requirements.txt  scraper_v3_railway.py
+[0m[01;34m__pycache__[0m  scraper_v2.py     scrapeshow.log
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ gi[K[Klspython3 scraper_v3_railway.py
+[?2004l============================================================
+🍳 RECIPE SEARCH & SCRAPER  (Supabase edition)
+============================================================
+  ✅ Connected to Supabase
+
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: Pork    1
+Search query: Pork
+
+Search scope:  [1] All sites (default)   [2] Specific sites
+Choice [1/2]: 
+Max recipes to scrape [blank = all found]: 
+Delay between requests in seconds [default 1.5]: 
+
+🔍 Searching 110 recipe site(s) for: 'Pork'
+    ✓ americastestkitchen.com: 6 recipe(s)
+    ✓ bbcgoodfood.com: 6 recipe(s)
+    ✓ bettycrocker.com: 5 recipe(s)
+    ✓ cdkitchen.com: 3 recipe(s)
+    ✓ chefkoch.de: 6 recipe(s)
+    ✓ bonappetit.com: 6 recipe(s)
+    ✓ marmiton.org: 6 recipe(s)
+  ℹ️  19 site(s) blocked/paywalled (skipped)
+✓ Found 38 unique recipe URL(s)
+
+📥 Scraping 38 recipe(s)...
+  [1/38] https://www.americastestkitchen.com/recipes/15639-braised-pork-marbella
+  ✓ Braised Pork Marbella
+  [2/38] https://www.americastestkitchen.com/recipes/10051-one-pan-noodle-bowls
+  ✓ One-Pan Noodle Bowls
+  [3/38] https://www.americastestkitchen.com/recipes/6942-sweet-and-spicy-pork-tenderloin
+  ✓ Sweet and Spicy Pork Tenderloin
+  [4/38] https://www.americastestkitchen.com/recipes/4990-pork-scaloppini
+  ✓ Pork Scaloppini
+  [5/38] https://www.americastestkitchen.com/recipes/7814-pork-ragu
+  ✓ Pork Ragu
+  [6/38] https://www.americastestkitchen.com/recipes/12579-goan-pork-vindaloo
+  ✓ Goan Pork Vindaloo
+  [7/38] https://www.bbcgoodfood.com/recipes/paprika-pork
+  ✓ Paprika pork
+  [8/38] https://www.bbcgoodfood.com/recipes/pork-medallions
+  ✓ Pork medallions
+  [9/38] https://www.bbcgoodfood.com/recipes/pork-noodle-stir-fry
+  ✓ Pork noodle stir-fry
+  [10/38] https://www.bbcgoodfood.com/recipes/pulled-pork
+  ✓ Pulled pork
+  [11/38] https://www.bbcgoodfood.com/recipes/thai-pork-peanut-curry
+  ✓ Thai pork & peanut curry
+  [12/38] https://www.bbcgoodfood.com/recipes/slow-cooked-pork-cider-sage-hotpot
+  ✓ Slow-cooked pork, cider & sage hotpot
+  [13/38] https://www.bettycrocker.com/recipes/homemade-chocolate-chip-cookies/77c14e03-d8b0-4844-846d-f19304f61c57
+  ✓ Homemade Chocolate Chip Cookies
+  [14/38] https://www.bettycrocker.com/recipes/easy-pineapple-upside-down-cake/c4d3321d-fad9-41cb-8f29-8d91a4279b07
+  ✓ Easy Pineapple Upside-Down Cake
+  [15/38] https://www.bettycrocker.com/recipes/vanilla-buttercream-frosting/39107a19-be94-4571-9031-f1fc5bd1d606
+  ✓ Vanilla Buttercream Frosting
+  [16/38] https://www.bettycrocker.com/recipes/simple-meatball-recipe/2959910f-1b27-438a-9085-d40b1950db20
+  ✓ Simple Meatballs
+  [17/38] https://www.bettycrocker.com/recipes/stuffed-peppers/63e29e18-903e-467c-aec5-fba4ce3a138f
+  ✓ Stuffed Peppers
+  [18/38] https://www.cdkitchen.com/recipes/copy-cat-recipes
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/copy-cat-recipes: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/copy-cat-recipes.
+  [19/38] https://www.cdkitchen.com/recipes/course
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/course: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/course.
+  [20/38] https://www.cdkitchen.com/recipes/holidays-parties
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/holidays-parties: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/holidays-parties.
+  [21/38] https://www.chefkoch.de/rezepte/1598021267025176/NT-Schweinefilet-im-Speckmantel-mit-Champignons-und-Spaetzle.html
+  ✓ NT-Schweinefilet im Speckmantel mit Champignons und Spätzle von dbartel
+  [22/38] https://www.chefkoch.de/rezepte/2210881354095272/Pulled-Pork-zarter-Schweinebraten-aus-dem-Ofen-fast-original-nur-ohne-Grill.html
+  ✓ Pulled Pork - aus dem Ofen ohne Grill
+  [23/38] https://www.chefkoch.de/rezepte/4389821756206624/Pappardelle-mit-Pulled-Pork-Salbei-und-Zitrone.html
+  ✗ Failed to scrape https://www.chefkoch.de/rezepte/4389821756206624/Pappardelle-mit-Pulled-Pork-Salbei-und-Zitrone.html: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.chefkoch.de/rezepte/4389821756206624/Pappardelle-mit-Pulled-Pork-Salbei-und-Zitrone.html.
+  [24/38] https://www.chefkoch.de/rezepte/1113761217428134/Brauhaus-Gulasch.html
+  ✓ Brauhaus-Gulasch von aasoeckchen
+  [25/38] https://www.chefkoch.de/rezepte/1342761239096947/Filettopf.html
+  ✓ Filettopf von ingwe
+  [26/38] https://www.chefkoch.de/rezepte/814911185880057/Rosmarin-Balsamico-Schweinefilet.html
+  ✓ Rosmarin-Balsamico-Schweinefilet von Koelkast
+  [27/38] https://www.bonappetit.com/recipe/pork-adobo-pull-apart-sliders
+  ✓ Pork Adobo Pull-Apart Sliders
+  [28/38] https://www.bonappetit.com/recipe/slow-cooker-bbq-pulled-pork-recipe
+  ✓ Slow Cooker BBQ Pulled Pork
+  [29/38] https://www.bonappetit.com/recipe/grilled-pork-tenderloin
+  ✓ Grilled Pork Tenderloin With Easy Marinade
+  [30/38] https://www.bonappetit.com/recipe/pork-tenderloin-with-agrodolce-cherries-recipe
+  ✓ Pork Tenderloin With Agrodolce Cherries
+  [31/38] https://www.bonappetit.com/recipe/pork-shoulder-steaks-with-horseradish-mustard-sauce
+  ✓ Pork Shoulder Steaks With Horseradish-Mustard Sauce
+  [32/38] https://www.bonappetit.com/recipe/pork-shoulder-inasal
+  ✓ Pork Shoulder Inasal
+  [33/38] https://www.marmiton.org/recettes/recette_cotelettes-de-porc-au-barbecue-pork-chop_392593.aspx
+  ✓ Côtelettes de porc au barbecue - Pork Chop
+  [34/38] https://www.marmiton.org/recettes/recette_pulled-pork-porc-confit-facon-americaine_349886.aspx
+  ✓ Pulled pork (porc confit façon américaine)
+  [35/38] https://www.marmiton.org/recettes/recette_burger-au-fruit-du-jacquier-facon-pulled-pork_531211.aspx
+  ✓ Burger au fruit du jacquier façon pulled pork
+  [36/38] https://www.marmiton.org/recettes/recette_pork-chow-mein_11945.aspx
+  ✓ Pork Chow Mein
+  [37/38] https://www.marmiton.org/recettes/recette_us-pulled-pork-porc-effiloche_230675.aspx
+  ✓ Porc effiloché (US pulled pork )
+  [38/38] https://www.marmiton.org/recettes/recette_burger-pulled-pork_537304.aspx
+  ✓ Burger pulled pork
+
+✓ Scraped 34/38 successfully
+
+💾 Saved 29 new recipe(s) to Supabase  (5 duplicate(s) skipped)
+
+✅  Done!  29 recipe(s) saved.
+
+Return to menu? [Y/n]: n
+Bye!
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ python3 scraper_v3_railway.py
+[?2004l============================================================
+🍳 RECIPE SEARCH & SCRAPER  (Supabase edition)
+============================================================
+  ✅ Connected to Supabase
+
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: 1
+Search query: Bread
+
+Search scope:  [1] All sites (default)   [2] Specific sites
+Choice [1/2]: 
+Max recipes to scrape [blank = all found]: 
+Delay between requests in seconds [default 1.5]: 
+
+🔍 Searching 110 recipe site(s) for: 'Bread'
+
+
+    ✓ americastestkitchen.com: 6 recipe(s)
+    ✓ bbcgoodfood.com: 6 recipe(s)
+    ✓ bettycrocker.com: 5 recipe(s)
+    ✓ chefkoch.de: 6 recipe(s)
+    ✓ bonappetit.com: 6 recipe(s)
+    ✓ cdkitchen.com: 3 recipe(s)
+    ✓ marmiton.org: 6 recipe(s)
+  ℹ️  19 site(s) blocked/paywalled (skipped)
+✓ Found 38 unique recipe URL(s)
+
+📥 Scraping 38 recipe(s)...
+  [1/38] https://www.americastestkitchen.com/recipes/16024-no-knead-rustic-loaf
+  ✓ No-Knead Rustic Loaf
+  [2/38] https://www.americastestkitchen.com/recipes/7671-easy-sandwich-bread
+  ✓ Easy Sandwich Bread
+  [3/38] https://www.americastestkitchen.com/recipes/5-rustic-italian-bread
+  ✓ Rustic Italian Bread
+  [4/38] https://www.americastestkitchen.com/recipes/17414-light-and-airy-focaccia
+  ✓ Light and Airy Focaccia
+  [5/38] https://www.americastestkitchen.com/recipes/16023-classic-italian-bread
+  ✓ Classic Italian Bread
+  [6/38] https://www.americastestkitchen.com/recipes/1939-24-hour-sourdough-bread
+  ✓ 24-Hour Sourdough Bread
+  [7/38] https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf
+  ✓ Banana bread
+  [8/38] https://www.bbcgoodfood.com/recipes/naan-bread
+  ✓ Naan bread
+  [9/38] https://www.bbcgoodfood.com/recipes/vegan-banana-bread
+  ✓ Vegan banana bread
+  [10/38] https://www.bbcgoodfood.com/recipes/chocolate-chip-banana-bread
+  ✓ Chocolate chip banana bread
+  [11/38] https://www.bbcgoodfood.com/recipes/easy-bread-rolls
+  ✓ Easy bread rolls
+  [12/38] https://www.bbcgoodfood.com/recipes/pitta-bread
+  ✓ Pitta bread
+  [13/38] https://www.bettycrocker.com/recipes/homemade-chocolate-chip-cookies/77c14e03-d8b0-4844-846d-f19304f61c57
+  ✓ Homemade Chocolate Chip Cookies
+  [14/38] https://www.bettycrocker.com/recipes/easy-pineapple-upside-down-cake/c4d3321d-fad9-41cb-8f29-8d91a4279b07
+  ✓ Easy Pineapple Upside-Down Cake
+  [15/38] https://www.bettycrocker.com/recipes/vanilla-buttercream-frosting/39107a19-be94-4571-9031-f1fc5bd1d606
+  ✓ Vanilla Buttercream Frosting
+  [16/38] https://www.bettycrocker.com/recipes/simple-meatball-recipe/2959910f-1b27-438a-9085-d40b1950db20
+  ✓ Simple Meatballs
+  [17/38] https://www.bettycrocker.com/recipes/stuffed-peppers/63e29e18-903e-467c-aec5-fba4ce3a138f
+  ✓ Stuffed Peppers
+  [18/38] https://www.chefkoch.de/rezepte/4411601769004717/Honey-Corn-Bread-mit-Korianderoel.html
+  ✗ Failed to scrape https://www.chefkoch.de/rezepte/4411601769004717/Honey-Corn-Bread-mit-Korianderoel.html: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.chefkoch.de/rezepte/4411601769004717/Honey-Corn-Bread-mit-Korianderoel.html.
+  [19/38] https://www.chefkoch.de/rezepte/3308371491374103/Fry-Bread.html
+  ✓ Fry Bread von amerikanisch-kochenDE
+  [20/38] https://www.chefkoch.de/rezepte/1339901238802410/Banana-Bread.html
+  ✓ Banana Bread von pinktroublebee
+  [21/38] https://www.chefkoch.de/rezepte/1235411228431245/No-Knead-Bread.html
+  ✓ No Knead Bread von cremona
+  [22/38] https://www.chefkoch.de/rezepte/1585341265963075/No-Knead-Bread-mit-Frischhefe.html
+  ✓ No - Knead - Bread mit Frischhefe von Pilger
+  [23/38] https://www.chefkoch.de/rezepte/2579481404460219/Monkey-Bread.html
+  ✓ Monkey Bread von FlowerBomb
+  [24/38] https://www.bonappetit.com/recipe/surprisingly-simple-sandwich-bread
+  ✓ Surprisingly Simple Sandwich Bread
+  [25/38] https://www.bonappetit.com/recipe/gluten-free-no-knead-oat-chia-bread
+  ✓ Gluten-Free No-Knead Oat Chia Bread
+  [26/38] https://www.bonappetit.com/recipe/bas-best-bread
+  ✓ BA's Best Bread
+  [27/38] https://www.bonappetit.com/recipe/pullman-sandwich-loaf
+  ✓ Simple Sandwich Loaf
+  [28/38] https://www.bonappetit.com/recipe/no-knead-cheddar-jalapeno-bread
+  ✓ Cheddar Jalapeño Bread
+  [29/38] https://www.bonappetit.com/recipe/master-bread-dough
+  ✓ Master Dough
+  [30/38] https://www.cdkitchen.com/recipes/copy-cat-recipes
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/copy-cat-recipes: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/copy-cat-recipes.
+  [31/38] https://www.cdkitchen.com/recipes/course
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/course: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/course.
+  [32/38] https://www.cdkitchen.com/recipes/holidays-parties
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/holidays-parties: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/holidays-parties.
+  [33/38] https://www.marmiton.org/recettes/recette_cake-a-la-banane-banana-bread-usa_12042.aspx
+  ✓ Cake à la banane / banana bread (USA)
+  [34/38] https://www.marmiton.org/recettes/recette_banana-bread-healthy-a-la-compote_347558.aspx
+  ✓ Banana bread healthy à la compote
+  [35/38] https://www.marmiton.org/recettes/recette_banana-bread_20632.aspx
+  ✓ banana bread
+  [36/38] https://www.marmiton.org/recettes/recette_muffins-facon-banana-bread_392194.aspx
+  ✓ Muffins façon banana bread
+  [37/38] https://www.marmiton.org/recettes/recette_banana-bread-au-chocolat_346037.aspx
+  ✓ Banana bread au chocolat
+  [38/38] https://www.marmiton.org/recettes/recette_garlic-bread-pain-a-l-ail_22772.aspx
+  ✓ Garlic Bread (pain à l'ail)
+
+✓ Scraped 34/38 successfully
+
+💾 Saved 27 new recipe(s) to Supabase  (7 duplicate(s) skipped)
+
+✅  Done!  27 recipe(s) saved.
+
+Return to menu? [Y/n]: 
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice:   Unrecognised choice — please enter 1, 2, 3, or q.
+
+Return to menu? [Y/n]: n
+Bye!
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ python3 scraper_v3_railway.py
+[?2004l============================================================
+🍳 RECIPE SEARCH & SCRAPER  (Supabase edition)
+============================================================
+  ✅ Connected to Supabase
+
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: beef
+  Unrecognised choice — please enter 1, 2, 3, or q.
+
+Return to menu? [Y/n]: y
+
+Actions:  [1] Search & scrape   [2] List saved   [3] View recipe   [q] Quit
+Choice: 1
+Search query: beef
+
+Search scope:  [1] All sites (default)   [2] Specific sites
+Choice [1/2]: 
+Max recipes to scrape [blank = all found]: 
+Delay between requests in seconds [default 1.5]: 
+
+🔍 Searching 110 recipe site(s) for: 'beef'
+    ✓ americastestkitchen.com: 6 recipe(s)
+    ✓ bettycrocker.com: 5 recipe(s)
+    ✓ bbcgoodfood.com: 6 recipe(s)
+    ✓ bonappetit.com: 6 recipe(s)
+    ✓ chefkoch.de: 6 recipe(s)
+    ✓ cdkitchen.com: 3 recipe(s)
+    ✓ marmiton.org: 6 recipe(s)
+  ℹ️  19 site(s) blocked/paywalled (skipped)
+✓ Found 38 unique recipe URL(s)
+
+📥 Scraping 38 recipe(s)...
+  [1/38] https://www.americastestkitchen.com/recipes/7271-crispy-orange-beef
+  ✓ Crispy Orange Beef
+  [2/38] https://www.americastestkitchen.com/recipes/7324-modern-beef-burgundy
+  ✓ Modern Beef Burgundy
+  [3/38] https://www.americastestkitchen.com/recipes/5027-best-beef-stew
+  ✓ Best Beef Stew
+  [4/38] https://www.americastestkitchen.com/recipes/13686-keema-matar-garam-masala-spiced-ground-beef-with-peas
+  ✓ Keema Matar (Garam Masala-Spiced Ground Beef with Peas)
+  [5/38] https://www.americastestkitchen.com/recipes/4913-grandmas-enchiladas
+  ✓ Grandma's Enchiladas
+  [6/38] https://www.americastestkitchen.com/recipes/7346-beef-and-bean-burritos
+  ✓ Beef and Bean Burritos
+  [7/38] https://www.bettycrocker.com/recipes/homemade-chocolate-chip-cookies/77c14e03-d8b0-4844-846d-f19304f61c57
+  ✓ Homemade Chocolate Chip Cookies
+  [8/38] https://www.bettycrocker.com/recipes/easy-pineapple-upside-down-cake/c4d3321d-fad9-41cb-8f29-8d91a4279b07
+  ✓ Easy Pineapple Upside-Down Cake
+  [9/38] https://www.bettycrocker.com/recipes/vanilla-buttercream-frosting/39107a19-be94-4571-9031-f1fc5bd1d606
+  ✓ Vanilla Buttercream Frosting
+  [10/38] https://www.bettycrocker.com/recipes/simple-meatball-recipe/2959910f-1b27-438a-9085-d40b1950db20
+  ✓ Simple Meatballs
+  [11/38] https://www.bettycrocker.com/recipes/stuffed-peppers/63e29e18-903e-467c-aec5-fba4ce3a138f
+  ✓ Stuffed Peppers
+  [12/38] https://www.bbcgoodfood.com/recipes/beef-stroganoff
+  ✓ Beef stroganoff
+  [13/38] https://www.bbcgoodfood.com/recipes/slow-cooker-beef-stew
+  ✓ Slow-cooker beef stew
+  [14/38] https://www.bbcgoodfood.com/recipes/beef-curry
+  ✓ Beef curry
+  [15/38] https://www.bbcgoodfood.com/recipes/braised-beef-onepot
+  ✓ Chinese-style braised beef one-pot
+  [16/38] https://www.bbcgoodfood.com/recipes/beef-vegetable-casserole
+  ✓ Beef stew
+  [17/38] https://www.bbcgoodfood.com/recipes/beef-goulash
+  ✓ Beef goulash
+  [18/38] https://www.bonappetit.com/recipe/beef-and-barley-stew
+  ✓ Beef and Barley Stew
+  [19/38] https://www.bonappetit.com/recipe/corned-beef
+  ✓ Corned Beef
+  [20/38] https://www.bonappetit.com/recipe/roast-beef-stock
+  ✓ Roast Beef Stock
+  [21/38] https://www.bonappetit.com/recipe/beef-wellington-with-green-sauce
+  ✓ Beef Wellington With Green Sauce
+  [22/38] https://www.bonappetit.com/recipe/beef-hot-links-with-chowchow-and-gold-sauce
+  ✓ Beef Hot Links With Chowchow and Gold Sauce
+  [23/38] https://www.bonappetit.com/recipe/corned-beef-hash-2
+  ✓ Corned Beef Hash
+  [24/38] https://www.chefkoch.de/rezepte/208741087287821/Boeuf-Bourguignon.html
+  ✓ Boeuf Bourguignon von Gerdandula
+  [25/38] https://www.chefkoch.de/rezepte/2133281343053838/Rinderrouladen-klassisch.html
+  ✓ Rinderrouladen klassisch von Shinara
+  [26/38] https://www.chefkoch.de/rezepte/819141186405890/Omas-beste-Frikadellen.html
+  ✓ Frikadellen - wie von Oma selber machen
+  [27/38] https://www.chefkoch.de/rezepte/1870431303884255/Rindersteaks-sanft-garen-mit-Niedrigtemperatur.html
+  ✓ Rindersteaks - sanft garen mit Niedrigtemperatur von Hobbykochen
+  [28/38] https://www.chefkoch.de/rezepte/2277101363269708/Omis-Rinderbraten-mit-Rotweinsosse.html
+  ✓ Omis Rinderbraten mit Rotweinsoße von Krümel146
+  [29/38] https://www.chefkoch.de/rezepte/1113761217428134/Brauhaus-Gulasch.html
+  ✓ Brauhaus-Gulasch von aasoeckchen
+  [30/38] https://www.cdkitchen.com/recipes/copy-cat-recipes
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/copy-cat-recipes: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/copy-cat-recipes.
+  [31/38] https://www.cdkitchen.com/recipes/course
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/course: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/course.
+  [32/38] https://www.cdkitchen.com/recipes/holidays-parties
+  ✗ Failed to scrape https://www.cdkitchen.com/recipes/holidays-parties: recipe-scrapers (15.11.0) exception: No Recipe Schema found at https://www.cdkitchen.com/recipes/holidays-parties.
+  [33/38] https://www.marmiton.org/recettes/recette_stoemp-au-corned-beef_26341.aspx
+  ✓ stoemp au corned beef
+  [34/38] https://www.marmiton.org/recettes/recette_fricassee-au-corned-de-beef_63511.aspx
+  ✓ Fricassée au corned de beef
+  [35/38] https://www.marmiton.org/recettes/recette_gratin-de-pates-au-corned-beef_338170.aspx
+  ✓ Gratin de pâtes au corned beef
+  [36/38] https://www.marmiton.org/recettes/recette_gratin-de-pommes-de-terre-au-corned-beef_195301.aspx
+  ✓ Gratin de pommes de terre au corned beef
+  [37/38] https://www.marmiton.org/recettes/recette_tagliatelles-sauce-corneed-beef_45460.aspx
+  ✓ Tagliatelles sauce corneed beef
+  [38/38] https://www.marmiton.org/recettes/recette_guiness-beef-stew_164943.aspx
+  ✓ Guiness beef stew
+
+✓ Scraped 35/38 successfully
+
+💾 Saved 29 new recipe(s) to Supabase  (6 duplicate(s) skipped)
+
+✅  Done!  29 recipe(s) saved.
+
+Return to menu? [Y/n]: n
+Bye!
+[?2004h]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ [K]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ [K]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ [K]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ [K]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ [K]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ [K]0;tristancoull7@pop-os: ~/techstuff/cse326/drdancookbook/backend[01;32mtristancoull7@pop-os[00m:[01;34m~/techstuff/cse326/drdancookbook/backend[00m$ got [K[K[Kot [K[K[Kt[Kit pull
+

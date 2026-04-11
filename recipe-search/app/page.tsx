@@ -1,4 +1,7 @@
 //Home page
+import { useEffect, useState } from 'react'
+import { supabase } from './supabaseClient'
+'use client'
 const SITE_NAME = "Dr.Dans's Cookbook"
 
 const HERO = {
@@ -15,13 +18,53 @@ const ABOUT = {
     "Our future plans for the website include pushing it to be hosted by vercel. When hosted by vercel we plan to create a flask server that will run our database interpreter and our webscraper that pulls recipes. We also plan to move our database to supabase.",
   ],
 }
+export default function LastIdComponent() {
+  const [lastId, setLastId] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchLastId() {
+      const { data, error } = await supabase
+        .from('Recipes')
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1)
+        .single(); 
+      if (error) {
+        console.error('Error fetching last ID:', error);
+      } else if (data) {
+        setLastId(data.id);
+      }
+    }
+
+    fetchLastId();
+  }, []);
+  
+export default function LastIdComponent1() {
+  const [lastId1, setLastId1] = useState<number | null>(null);
+  useEffect(() => {
+    async function fetchLastId() {
+      const { data, error } = await supabase
+        .from('search_log')
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1)
+        .single(); 
+      if (error) {
+        console.error('Error fetching last ID:', error);
+      } else if (data) {
+        setLastId1(data.id);
+      }
+    }
+
+    fetchLastId1();
+  }, []);
 
 export default async function Home() {
 
 
   const STATS = [
-    { number: 107/*stats.total_recipes*/, label: "Recipes in the catalog" },
-    { number: 120/*stats.total_sites*/, label: "Recipe sites scraped" },
+    { number: return <div>{lastID}</div> *stats.total_recipes*/, label: "Recipes in the catalog" },
+    { number: 120, label: "Recipe sites scraped" },
     { number: 3, label: "Number of scrapes run" },
   ]
   return (
