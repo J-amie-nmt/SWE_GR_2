@@ -32,21 +32,27 @@ export default function Home() {
   const [scrapeCount, setScrapeCount] = useState<number | null>(null)
 
 useEffect(() => {
-  supabase
-    .from('Recipes')
-    .select('id', { count: 'exact', head: true })
-    .then(({ count, error }) => {
-      console.log('Recipes:', count, error)
-      setRecipeCount(count)
-    })
+supabase
+  .from('Recipes')
+  .select('id')
+  .order('id', { ascending: false })
+  .limit(1)
+  .single()
+  .then(({ data, error }) => {
+    console.log('Last recipe id:', data, error)
+    setRecipeCount(data?.id ?? 0)
+  })
 
-  supabase
-    .from('search_log')
-    .select('id', { count: 'exact', head: true })
-    .then(({ count, error }) => {
-      console.log('Scrapes:', count, error)
-      setScrapeCount(count)
-    })
+supabase
+  .from('search_log')
+  .select('id')
+  .order('id', { ascending: false })
+  .limit(1)
+  .single()
+  .then(({ data, error }) => {
+    console.log('Last recipe id:', data, error)
+    setRecipeCount(data?.id ?? 0)
+  })
 }, [])
 
   const STATS = [
