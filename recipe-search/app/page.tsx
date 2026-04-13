@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
+
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -29,19 +31,23 @@ export default function Home() {
   const [recipeCount, setRecipeCount] = useState<number | null>(null)
   const [scrapeCount, setScrapeCount] = useState<number | null>(null)
 
-  useEffect(() => {
-    // Total recipes
-    supabase
-      .from('Recipes')
-      .select('id', { count: 'exact', head: true })
-      .then(({ count }) => setRecipeCount(count))
+useEffect(() => {
+  supabase
+    .from('Recipes')
+    .select('id', { count: 'exact', head: true })
+    .then(({ count, error }) => {
+      console.log('Recipes:', count, error)
+      setRecipeCount(count)
+    })
 
-    // Total scrapes run
-    supabase
-      .from('search_log')
-      .select('id', { count: 'exact', head: true })
-      .then(({ count }) => setScrapeCount(count))
-  }, [])
+  supabase
+    .from('search_log')
+    .select('id', { count: 'exact', head: true })
+    .then(({ count, error }) => {
+      console.log('Scrapes:', count, error)
+      setScrapeCount(count)
+    })
+}, [])
 
   const STATS = [
     { number: recipeCount ?? '...', label: "Recipes in the catalog" },
