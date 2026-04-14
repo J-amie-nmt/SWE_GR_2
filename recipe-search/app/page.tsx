@@ -50,8 +50,8 @@ supabase
   .limit(1)
   .single()
   .then(({ data, error }) => {
-    console.log('Last recipe id:', data, error)
-    setRecipeCount(data?.id ?? 0)
+    console.log('Last scrape id:', data, error)
+    setScrapeCount(data?.id ?? 0)
   })
 }, [])
 
