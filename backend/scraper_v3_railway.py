@@ -764,21 +764,43 @@ class RecipeSearchScraper:
 
     def _is_vegan(self, ingredients: List[str]) -> bool:
         NON_VEGAN = {
-            'meat', 'chicken', 'beef', 'pork', 'fish', 'egg', 'eggs',
-            'milk', 'cheese', 'butter', 'cream', 'honey', 'bacon',
-            'sausage', 'turkey', 'lamb', 'yogurt', 'yoghurt', 'gelatin',
-            'lard', 'suet', 'anchovies', 'shrimp', 'crab', 'lobster',
-            'whey', 'casein', 'shellfish', 'ghee',
+            # Meat
+            'meat', 'chicken', 'beef', 'pork', 'ham', 'bacon', 'sausage',
+            'turkey', 'lamb', 'duck', 'veal', 'goat', 'rabbit', 'venison',
+            'salami', 'pepperoni', 'prosciutto',
+            # Seafood
+            'fish', 'anchovy', 'anchovies', 'shrimp', 'prawn', 'prawns',
+            'crab', 'lobster', 'shellfish', 'salmon', 'tuna', 'cod',
+            'sardine', 'sardines', 'mussel', 'mussels', 'clam', 'clams',
+            'oyster', 'oysters', 'scallop', 'scallops', 'squid', 'octopus',
+            # Dairy
+            'milk', 'cheese', 'butter', 'cream', 'ghee', 'whey', 'casein',
+            'lactose', 'lactalbumin', 'kefir', 'buttermilk', 'custard',
+            'yogurt', 'yoghurt',
+            # Eggs
+            'egg', 'eggs', 'albumin', 'albumen', 'mayonnaise', 'meringue',
+            # Animal-derived additives
+            'honey', 'gelatin', 'lard', 'suet', 'tallow', 'rennet',
+            'isinglass', 'carmine', 'cochineal', 'shellac', 'collagen',
+            'lanolin',
         }
         text = ' '.join(ingredients).lower()
         return not any(re.search(rf'\b{re.escape(w)}\b', text) for w in NON_VEGAN)
 
     def _is_vegetarian(self, ingredients: List[str]) -> bool:
         NON_VEG = {
-            'meat', 'chicken', 'beef', 'pork', 'fish', 'bacon', 'sausage',
-            'turkey', 'lamb', 'anchovy', 'anchovies', 'shrimp', 'crab',
-            'lobster', 'clam', 'clams', 'oyster', 'oysters', 'mussel',
-            'mussels', 'lard', 'suet', 'gelatin', 'duck', 'veal',
+            # Meat
+            'meat', 'chicken', 'beef', 'pork', 'ham', 'bacon', 'sausage',
+            'turkey', 'lamb', 'duck', 'veal', 'goat', 'rabbit', 'venison',
+            'bison', 'quail', 'goose', 'salami', 'pepperoni', 'prosciutto',
+            # Seafood
+            'fish', 'salmon', 'tuna', 'cod', 'tilapia', 'sardine', 'sardines',
+            'herring', 'mackerel', 'anchovy', 'anchovies', 'shrimp', 'prawn',
+            'prawns', 'crab', 'lobster', 'squid', 'octopus', 'scallop', 'scallops',
+            'clam', 'clams', 'oyster', 'oysters', 'mussel', 'mussels',
+            # Animal-derived
+            'lard', 'suet', 'tallow', 'gelatin', 'rennet', 'isinglass',
+            'carmine', 'cochineal', 'dashi',
         }
         text = ' '.join(ingredients).lower()
         return not any(re.search(rf'\b{re.escape(w)}\b', text) for w in NON_VEG)
