@@ -32,27 +32,12 @@ export default function Home() {
   const [scrapeCount, setScrapeCount] = useState<number | null>(null)
 
 useEffect(() => {
-supabase
-  .from('Recipes')
-  .select('id')
-  .order('id', { ascending: false })
-  .limit(1)
-  .single()
-  .then(({ data, error }) => {
-    console.log('Last recipe id:', data, error)
-    setRecipeCount(data?.id ?? 0)
-  })
-
-supabase
-  .from('search_log')
-  .select('id')
-  .order('id', { ascending: false })
-  .limit(1)
-  .single()
-  .then(({ data, error }) => {
-    console.log('Last scrape id:', data, error)
-    setScrapeCount(data?.id ?? 0)
-  })
+  fetch('/api/stats')
+    .then(res => res.json())
+    .then(({ recipeCount, scrapeCount }) => {
+      setRecipeCount(recipeCount)
+      setScrapeCount(scrapeCount)
+    })
 }, [])
 
   const STATS = [
