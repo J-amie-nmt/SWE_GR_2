@@ -1,4 +1,3 @@
-// app/search/page.tsx
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -16,6 +15,7 @@ interface RecipeSummary {
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
+const PAGE_SIZE = 80
 
 export default function RecipesPage() {
   const [text, setText] = useState('')
@@ -24,34 +24,57 @@ export default function RecipesPage() {
   const [searched, setSearched] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!text.trim()) return
-    setLoading(true)
-    setSearched(true)
-    setError(null)
-    setResults([])
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
 
-    const controller = new AbortController()
+  const fetchRecipes = async (query: string, pageNum: number) => {
+    setLoading(true)
+    setError(null)
+
+    const offset = (pageNum - 1) * PAGE_SIZE
 
     try {
-      const url = `${API_BASE}/api/recipes?q=${encodeURIComponent(text.trim())}&limit=20`
-      const res = await fetch(url, { signal: controller.signal })
+      const url = `${API_BASE}/api/recipes?q=${encodeURIComponent(query)}&limit=${PAGE_SIZE}&offset=${offset}`
+      const res = await fetch(url)
+
       if (!res.ok) {
         throw new Error(`Server error: ${res.status}`)
       }
-      const data: RecipeSummary[] = await res.json()
-      setResults(Array.isArray(data) ? data : [])
+
+      const data = await res.json()
+
+      // Supports both {results, total} OR plain array fallback
+      if (Array.isArray(data)) {
+        setResults(data)
+        setTotal(data.length)
+      } else {
+        setResults(data.results || [])
+        setTotal(data.total || 0)
+      }
+
     } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') return
       console.error(err)
       setError("Something went wrong. Please try again.")
     } finally {
       setLoading(false)
     }
-
-    return () => controller.abort()
   }
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!text.trim()) return
+
+    setSearched(true)
+    setPage(1)
+    fetchRecipes(text.trim(), 1)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+    fetchRecipes(text.trim(), newPage)
+  }
+
+  const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
     <div className="page-content fade-up">
@@ -84,18 +107,22 @@ export default function RecipesPage() {
 
       {!loading && searched && !error && results.length === 0 && (
         <p style={{ color: "var(--ink-muted)" }}>
-          No recipes found for <strong>"{text}"</strong>. Try a different search term.
+          No recipes found for <strong>"{text}"</strong>.
         </p>
       )}
 
       {!loading && results.length > 0 && (
         <>
           <p style={{ fontSize: "0.85rem", color: "var(--ink-muted)", marginBottom: 20 }}>
-            {results.length} result{results.length !== 1 ? 's' : ''}
+            Page {page} of {totalPages || 1}
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 16
+          }}>
             {results.map((r) => (
-              // FIX: /search/:id not /recipes/:id
               <Link key={r.id} href={`/search/${r.id}`} className="card">
                 {r.image_url && (
                   <img
@@ -106,13 +133,26 @@ export default function RecipesPage() {
                   />
                 )}
                 <div style={{ padding: "10px 4px 4px" }}>
-                  <p style={{ margin: 0, fontWeight: 600, fontSize: "0.92rem" }}>{r.title}</p>
+                  <p style={{ margin: 0, fontWeight: 600, fontSize: "0.92rem" }}>
+                    {r.title}
+                  </p>
+
                   {r.source_site && (
-                    <p style={{ margin: "4px 0 0", fontSize: "0.78rem", color: "var(--ink-muted)" }}>
+                    <p style={{
+                      margin: "4px 0 0",
+                      fontSize: "0.78rem",
+                      color: "var(--ink-muted)"
+                    }}>
                       {r.source_site}
                     </p>
                   )}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
+
+                  <div style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 4,
+                    marginTop: 8
+                  }}>
                     {r.total_time && <span className="pill">{r.total_time}</span>}
                     {r.cuisine && <span className="pill">{r.cuisine}</span>}
                     {r.dietary_tags?.split(',').slice(0, 2).map((t) => (
@@ -123,6 +163,30 @@ export default function RecipesPage() {
               </Link>
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div style={{
+              marginTop: 32,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 8
+            }}>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => handlePageChange(p)}
+                  className="btn"
+                  style={{
+                    background: p === page ? "var(--accent)" : "transparent",
+                    color: p === page ? "#fff" : "inherit"
+                  }}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>

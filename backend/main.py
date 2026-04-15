@@ -1,9 +1,9 @@
-# backend/main.py
 from fastapi import FastAPI, BackgroundTasks, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import os
 from scraper_v2 import RecipeSearchScraper
+from pydantic import BaseModel
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
@@ -26,16 +26,17 @@ def get_db() -> Client:
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-# --- GET /api/recipes?q=pasta&limit=20 ---
+# --- GET /api/recipes?q=pasta&limit=20&offset=0 ---
 @app.get("/api/recipes")
-def search_recipes(q: str = "", limit: int = 20):
+def search_recipes(q: str = "", limit: int = 20, offset: int = 0):
     db = get_db()
-    # FIX 1: Table name is lowercase "recipes" everywhere — match your Supabase table name
-    query = db.table("Recipes") \
-        .select("id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories")
+
+    query = db.table("Recipes").select(
+        "id, title, source_site, image_url, total_time, yields, cuisine, dietary_tags, calories",
+        count="exact"  # get total count
+    )
 
     if q:
-        # FIX 2: Search across title, dietary_tags, cuisine, and ingredients — not just title
         query = query.or_(
             f"title.ilike.%{q}%,"
             f"dietary_tags.ilike.%{q}%,"
@@ -43,28 +44,34 @@ def search_recipes(q: str = "", limit: int = 20):
             f"ingredients.ilike.%{q}%"
         )
 
-    query = query.order("id", desc=True).limit(limit)
-    rows = query.execute().data
-    return rows
+    query = query.order("id", desc=True) \
+                 .range(offset, offset + limit - 1)
+
+    res = query.execute()
+
+    return {
+        "results": res.data,
+        "total": res.count or 0
+    }
 
 
 # --- GET /api/recipes/:id ---
 @app.get("/api/recipes/{recipe_id}")
 def get_recipe(recipe_id: int):
     db = get_db()
-    # FIX 1: consistent lowercase table name
+
     rows = db.table("Recipes").select("*").eq("id", recipe_id).execute().data
 
-    # FIX 3: raise a proper 404 so the frontend error state triggers correctly
     if not rows:
         raise HTTPException(status_code=404, detail="Recipe not found")
 
     r = rows[0]
-    # Safely split pipe-delimited strings into arrays, filtering empty strings
+
     r["ingredients"] = [i for i in (r.get("ingredients") or "").split(" | ") if i.strip()]
     r["instructions"] = [i for i in (r.get("instructions") or "").split(" | ") if i.strip()]
+
     return r
-from pydantic import BaseModel
+
 
 class SaveRecipeBody(BaseModel):
     user_email: str
@@ -76,22 +83,26 @@ class SaveRecipeBody(BaseModel):
     cuisine: str | None = None
     dietary_tags: str | None = None
 
-# --- GET /api/recipes/saved?email=user@email.com ---
+
+# --- GET /api/saved?email=user@email.com ---
 @app.get("/api/saved")
 def get_saved_recipes(email: str):
     db = get_db()
+
     rows = db.table("saved_recipes") \
         .select("*") \
         .eq("user_email", email) \
         .order("saved_at", desc=True) \
         .execute().data
+
     return rows
+
 
 # --- POST /api/saved ---
 @app.post("/api/saved")
 def save_recipe_for_user(body: SaveRecipeBody):
     db = get_db()
-    # upsert so double-clicking save doesn't error
+
     db.table("saved_recipes").upsert({
         "user_email":  body.user_email,
         "recipe_id":   body.recipe_id,
@@ -102,38 +113,46 @@ def save_recipe_for_user(body: SaveRecipeBody):
         "cuisine":     body.cuisine,
         "dietary_tags": body.dietary_tags,
     }, on_conflict="user_email,recipe_id").execute()
+
     return {"status": "saved"}
+
 
 # --- DELETE /api/saved ---
 @app.delete("/api/saved")
 def unsave_recipe_for_user(body: SaveRecipeBody):
     db = get_db()
+
     db.table("saved_recipes") \
         .delete() \
         .eq("user_email", body.user_email) \
-        .eq("recipe_id",  body.recipe_id) \
+        .eq("recipe_id", body.recipe_id) \
         .execute()
+
     return {"status": "removed"}
 
-# --- POST /api/scrape  body: { "query": "pasta", "num_results": 10 } ---
+
+# --- Scraper ---
 def run_scrape(query: str, num_results: int):
     scraper = RecipeSearchScraper()
     scraper.search_and_scrape(query=query, num_results=num_results)
 
 
+# --- POST /api/scrape ---
 @app.post("/api/scrape")
 def trigger_scrape(
     body: dict,
     background_tasks: BackgroundTasks,
-    x_scrape_secret: str = Header(None),  # FIX 4: protect scrape endpoint
+    x_scrape_secret: str = Header(None),
 ):
     if not SCRAPE_SECRET or x_scrape_secret != SCRAPE_SECRET:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     query = body.get("query", "")
     num_results = body.get("num_results", 10)
+
     if not query:
         raise HTTPException(status_code=400, detail="query is required")
 
     background_tasks.add_task(run_scrape, query, num_results)
+
     return {"status": "scraping started", "query": query}

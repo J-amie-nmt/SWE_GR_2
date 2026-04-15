@@ -1,0 +1,17 @@
+Scraper Program
+
+Deliverables:
+1. Pull:
+    Author of Recipe
+    Site of Recipe
+    Title of Recipe
+    Ingredients
+    Instructions
+    Image URL
+    Time to Prepare
+    Time to Cook
+    Total Time
+    Number of Servings
+    Nutrition Information (if available)
+
+2. Store the data in a structured format (e.g., JSON, CSV, or a database).

@@ -1,10 +1,10 @@
-# scraper_v3_railway.py
+# scraper_v2.py
 """
 Recipe Search & Scraper
 Searches for recipes across multiple websites and stores data in Supabase.
 
 Usage (interactive):
-    python3 scraper_v3_railway.py
+    python scraper_v2.py
 
 Dependencies:
     pip install recipe-scrapers beautifulsoup4 requests lxml supabase
@@ -27,15 +27,13 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")  # use service role key for scraper
-DEFAULT_SITES_FILE = "website-recipe-list.txt"
+
 
 # ═══════════════════════════════════════════════════════════════
 #  SITE LIST
 # ═══════════════════════════════════════════════════════════════
 
-# Fallback list of recipe websites
-# (in case load function fails / file is not found)
-DEFAULT_RECIPE_SITES = [
+all_recipes_sites = [
     '101cookbooks.com', 'acouplecooks.com', 'acozykitchen.com', 'addapinch.com',
     'africanbites.com', 'alexandracooks.com', 'allrecipes.com', 'allthehealthythings.com',
     'altonbrown.com', 'ambitiouskitchen.com', 'americastestkitchen.com',
@@ -67,27 +65,6 @@ DEFAULT_RECIPE_SITES = [
     'thespruceeats.com', 'thewoksoflife.com', 'twopeasandtheirpod.com',
     'wellplated.com', 'whatsgabycooking.com', 'wholefoodsmarket.com', 'yummly.com',
 ]
-
-def load_recipe_sites(filepath: str = DEFAULT_SITES_FILE) -> List[str]:
-    """
-    Load recipe site list from a plain-text file (one domain per line).
-    Lines starting with '#' are treated as comments and ignored.
-    """
-    if not os.path.exists(filepath):
-        return DEFAULT_RECIPE_SITES
-
-    sites = []
-    with open(filepath, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                sites.append(line)
-
-    if not sites:
-        return DEFAULT_RECIPE_SITES
-
-    print(f"Loaded {len(sites)} sites from '{filepath}'")
-    return sites
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -191,11 +168,11 @@ def save_recipe(supabase: Client, recipe: Dict) -> bool:
     Insert a recipe. Skips duplicates by checking URL first.
     Returns True if inserted, False if duplicate.
     """
-    # FIX 1: consistent lowercase table name "recipes" everywhere
-    existing = supabase.table("Recipes").select("id").eq("url", recipe["url"]).execute()
+    existing = supabase.table("recipes").select("id").eq("url", recipe["url"]).execute()
     if existing.data:
         return False
 
+    # Map nutrient keys to match Supabase column names
     row = {
         "title":                   recipe.get("title"),
         "url":                     recipe.get("url"),
@@ -223,7 +200,7 @@ def save_recipe(supabase: Client, recipe: Dict) -> bool:
         "scraped_date":            recipe.get("scraped_date"),
     }
 
-    supabase.table("Recipes").insert(row).execute()
+    supabase.table("recipes").insert(row).execute()
     return True
 
 
@@ -237,8 +214,7 @@ def log_search(supabase: Client, query: str, sites: Optional[List[str]], results
 
 
 def list_recipes(supabase: Client, limit: int = 50):
-    # FIX 1: consistent lowercase table name
-    rows = supabase.table("Recipes") \
+    rows = supabase.table("recipes") \
         .select("id, title, source_site, cuisine, dietary_tags, scraped_date") \
         .order("id", desc=True) \
         .limit(limit) \
@@ -257,13 +233,12 @@ def list_recipes(supabase: Client, limit: int = 50):
             f"{str(r['cuisine'] or '')[:14]:<15} "
             f"{str(r['dietary_tags'] or '')[:30]}"
         )
-    total = supabase.table("Recipes").select("id", count="exact").execute().count
+    total = supabase.table("recipes").select("id", count="exact").execute().count
     print(f"\n  Showing {len(rows)} of {total} saved recipe(s).")
 
 
 def view_recipe(supabase: Client, recipe_id: int):
-    # FIX 1: consistent lowercase table name
-    rows = supabase.table("Recipes").select("*").eq("id", recipe_id).execute().data
+    rows = supabase.table("recipes").select("*").eq("id", recipe_id).execute().data
     if not rows:
         print(f"  No recipe with ID {recipe_id}.")
         return
@@ -383,7 +358,7 @@ class RecipeSearchScraper:
         max_workers: int = 10,
         per_site_limit: int = 6,
     ) -> List[str]:
-        target_sites = sites if sites is not None else DEFAULT_RECIPE_SITES
+        target_sites = sites if sites is not None else all_recipes_sites
         print(f"\n🔍 Searching {len(target_sites)} recipe site(s) for: '{query}'")
         recipe_urls: List[str] = []
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -396,7 +371,7 @@ class RecipeSearchScraper:
         unique_urls = list(dict.fromkeys(recipe_urls))
         if self._blocked_sites:
             print(f"  ℹ️  {len(self._blocked_sites)} site(s) blocked/paywalled (skipped)")
-        print(f"✓Found {len(unique_urls)} unique recipe URL(s)")
+        print(f"✓ Found {len(unique_urls)} unique recipe URL(s)")
         return unique_urls if num_results is None else unique_urls[:num_results]
 
     def scrape_recipe(self, url: str) -> Optional[Dict]:
@@ -414,7 +389,7 @@ class RecipeSearchScraper:
                 'cuisine':      self._safe_extract(scraper.cuisine) or '',
                 'category':     self._safe_extract(scraper.category) or '',
                 'ingredients':  ' | '.join(scraper.ingredients()),
-                'instructions': self._clean_instructions(scraper),
+                'instructions': self._clean_instructions(self._safe_extract(scraper.instructions)),
                 **self._extract_nutrients(scraper),
                 'dietary_tags': ', '.join(self._extract_dietary_tags(scraper)),
                 'source_site':  urlparse(url).netloc,
@@ -436,35 +411,11 @@ class RecipeSearchScraper:
             return ''
         return f"{time_val} minutes" if isinstance(time_val, int) else str(time_val)
 
-    def _clean_instructions(self, scraper) -> str:
-        """
-        FIX 2: Try to get instructions as a list first (preserves step boundaries),
-        then fall back to the raw string. Normalizes all newline variants to ' | '
-        so the API can reliably split on it.
-        """
-        # Try list form first — recipe-scrapers exposes instructions_list() on many scrapers
-        steps: List[str] = []
-        try:
-            steps = scraper.instructions_list()
-        except Exception:
-            pass
-
-        if steps:
-            cleaned_steps = [re.sub(r'\s+', ' ', s).strip() for s in steps if s.strip()]
-            joined = ' | '.join(cleaned_steps)
-        else:
-            # Fall back to raw string and split on newlines
-            try:
-                raw = scraper.instructions() or ''
-            except Exception:
-                return ''
-            # Normalize any run of newlines/whitespace-only lines into our separator
-            joined = re.sub(r'\n+', ' | ', raw.strip())
-            joined = re.sub(r'\s+', ' ', joined).strip()
-            # Collapse accidental double separators
-            joined = re.sub(r'(\s*\|\s*){2,}', ' | ', joined)
-
-        return joined[:2000] + '...' if len(joined) > 2000 else joined
+    def _clean_instructions(self, instructions: Optional[str]) -> str:
+        if not instructions:
+            return ''
+        cleaned = re.sub(r'\s+', ' ', instructions).replace('\n\n', ' | ').strip()
+        return cleaned[:2000] + '...' if len(cleaned) > 2000 else cleaned
 
     def _extract_nutrients(self, scraper) -> Dict[str, str]:
         result = {k: '' for k in self.NUTRIENT_KEYS}
@@ -481,343 +432,40 @@ class RecipeSearchScraper:
         tags = []
         try:
             ingredients = scraper.ingredients()
-
-            # Vegan / Vegetarian
             text = ' '.join(ingredients).lower()
             if self._is_vegan(ingredients):
                 tags.append('vegan')
             elif self._is_vegetarian(ingredients):
                 tags.append('vegetarian')
-            
-            # Pescatarian
-            if self._is_pescatarian(ingredients):
-                tags.append('pescatarian')
-            
-            # Gluten-Free
-            GLUTEN_SOURCES = {
-                'flour', 'wheat', 'barley', 'rye', 'spelt', 'farro', 'bulgur',
-                'semolina', 'durum', 'triticale', 'malt', 'bread', 'breadcrumbs',
-                'pasta', 'noodles', 'couscous', 'cracker', 'tortilla', 'pita',
-                'soy sauce', 'teriyaki', 'panko', 'seitan', 'beer',
-            }
-            GLUTEN_FREE_SIGNALS = {'gluten-free', 'gluten free', 'gf flour', 'rice flour',
-                                   'almond flour', 'coconut flour', 'tapioca flour'}
-            has_gf_signal  = any(s in text for s in GLUTEN_FREE_SIGNALS)
-            has_gluten     = any(re.search(rf'\b{re.escape(g)}\b', text) for g in GLUTEN_SOURCES)
-            if has_gf_signal or not has_gluten:
+            if 'gluten-free' in text or 'gluten free' in text:
                 tags.append('gluten-free')
-            
-            # Lactose-Free
-            DAIRY_SOURCES = {
-                'milk', 'cheese', 'butter', 'cream', 'yogurt', 'yoghurt',
-                'whey', 'casein', 'lactose', 'ghee', 'kefir', 'sour cream',
-                'half-and-half', 'half and half', 'ice cream', 'custard',
-                'bechamel', 'béchamel',
-            }
-            DAIRY_FREE_SIGNALS = {'dairy-free', 'dairy free', 'non-dairy', 'nondairy',
-                                   'lactose-free', 'lactose free', 'plant-based milk',
-                                   'almond milk', 'oat milk', 'soy milk', 'coconut milk',
-                                   'vegan butter', 'vegan cheese'}
-            has_df_signal = any(s in text for s in DAIRY_FREE_SIGNALS)
-            has_dairy     = any(re.search(rf'\b{re.escape(d)}\b', text) for d in DAIRY_SOURCES)
-            if has_df_signal or not has_dairy:
-                tags.append('lactose-free')
-            
-            # Nut Allergy / Nut-Free
-            NUT_SOURCES = {
-                'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
-                'pecan', 'pecans', 'pistachio', 'pistachios', 'hazelnut', 'hazelnuts',
-                'macadamia', 'pine nut', 'pine nuts', 'brazil nut', 'brazil nuts',
-                'peanut', 'peanuts', 'peanut butter', 'nut butter', 'almond butter',
-                'almond flour', 'almond milk', 'marzipan', 'praline', 'nutella',
-                'mixed nuts', 'chopped nuts',
-            }
-            has_nuts = any(re.search(rf'\b{re.escape(n)}\b', text) for n in NUT_SOURCES)
-            if not has_nuts:
-                tags.append('nut-free')
-            
-            # Shellfish Allergy / Shellfish-Free
-            SHELLFISH_SOURCES = {
-                'shrimp', 'prawn', 'prawns', 'crab', 'lobster', 'crayfish',
-                'crawfish', 'scallop', 'scallops', 'clam', 'clams', 'oyster',
-                'oysters', 'mussel', 'mussels', 'barnacle', 'krill',
-                'cuttlefish', 'squid', 'calamari', 'octopus',
-                'seafood sauce', 'shrimp paste', 'fish sauce',
-            }
-            has_shellfish = any(re.search(rf'\b{re.escape(s)}\b', text) for s in SHELLFISH_SOURCES)
-            if not has_shellfish:
-                tags.append('shellfish-free')
-
-            # Diabetic-Friendly (flags high-sugar / high-carb) -- not perfect
-            HIGH_SUGAR_CARB = {
-                'sugar', 'brown sugar', 'powdered sugar', 'caster sugar',
-                'corn syrup', 'high fructose', 'honey', 'maple syrup', 'agave',
-                'molasses', 'jam', 'jelly', 'condensed milk', 'caramel',
-                'frosting', 'icing', 'candy', 'chocolate chips',
-                'white rice', 'white bread', 'white flour', 'pasta',
-                'potato', 'potatoes', 'sweet potato',
-            }
-            LOW_SUGAR_SIGNALS = {'sugar-free', 'sugar free', 'no sugar', 'zero sugar',
-                                 'diabetic', 'low-carb', 'low carb', 'no added sugar'}
-            has_ls_signal   = any(s in text for s in LOW_SUGAR_SIGNALS)
-            has_high_sc     = any(re.search(rf'\b{re.escape(h)}\b', text) for h in HIGH_SUGAR_CARB)
-            # Try nutrition data first
-            try:
-                nutrients = scraper.nutrients() or {}
-                sugar_str = nutrients.get('sugarContent', '')
-                carb_str  = nutrients.get('carbohydrateContent', '')
-                sugar_g   = float(re.search(r'[\d.]+', sugar_str).group()) if sugar_str else None
-                carb_g    = float(re.search(r'[\d.]+', carb_str).group()) if carb_str else None
-                if (sugar_g is not None and carb_g is not None
-                        and sugar_g <= 10 and carb_g <= 30):
-                    tags.append('diabetic-friendly')
-                elif has_ls_signal and not has_high_sc:
-                    tags.append('diabetic-friendly')
-            except Exception:
-                if has_ls_signal or not has_high_sc:
-                    tags.append('diabetic-friendly')
-            
-            # Keto
-            KETO_DISQUALIFIERS = {
-                'sugar', 'honey', 'maple syrup', 'corn syrup', 'agave',
-                'white flour', 'wheat flour', 'bread', 'pasta', 'rice',
-                'potato', 'oat', 'oats', 'oatmeal', 'beans', 'lentils',
-                'chickpeas', 'corn', 'tortilla', 'cracker', 'granola',
-            }
-            KETO_SIGNALS = {'keto', 'ketogenic', 'low-carb', 'low carb'}
-            has_keto_signal = any(s in text for s in KETO_SIGNALS)
-            has_keto_disq   = any(re.search(rf'\b{re.escape(k)}\b', text) for k in KETO_DISQUALIFIERS)
-            try:
-                nutrients = scraper.nutrients() or {}
-                carb_str  = nutrients.get('carbohydrateContent', '')
-                carb_g    = float(re.search(r'[\d.]+', carb_str).group()) if carb_str else None
-                if carb_g is not None and carb_g <= 10:
-                    tags.append('keto')
-                elif has_keto_signal and not has_keto_disq:
-                    tags.append('keto')
-            except Exception:
-                if has_keto_signal and not has_keto_disq:
-                    tags.append('keto')
-
-            # Low-Calorie
-            HIGH_CAL_INGREDIENTS = {
-                'butter', 'oil', 'cream', 'lard', 'shortening', 'sugar',
-                'chocolate', 'cheese', 'bacon', 'mayonnaise', 'peanut butter',
-                'coconut cream', 'heavy cream', 'full-fat',
-            }
-            LOW_CAL_SIGNALS = {'low-calorie', 'low calorie', 'light', 'diet', 'reduced-fat',
-                                'reduced fat', 'low-fat', 'low fat', 'skinny', 'low-cal',
-                                'low cal', 'lowcal', 'lowfat'}
-            has_lc_signal = any(s in text for s in LOW_CAL_SIGNALS)
-            try:
-                nutrients   = scraper.nutrients() or {}
-                cal_str     = nutrients.get('calories', '')
-                cal_val     = float(re.search(r'[\d.]+', cal_str).group()) if cal_str else None
-                if cal_val is not None and cal_val <= 400:
-                    tags.append('low-calorie')
-                elif has_lc_signal:
-                    tags.append('low-calorie')
-            except Exception:
-                if has_lc_signal:
-                    tags.append('low-calorie')
-
-            # High-Protein
-            HIGH_PROTEIN_INGREDIENTS = {
-                'chicken', 'beef', 'pork', 'turkey', 'tuna', 'salmon', 'egg',
-                'eggs', 'lentils', 'chickpeas', 'black beans', 'edamame',
-                'tofu', 'tempeh', 'cottage cheese', 'greek yogurt',
-                'protein powder', 'whey', 'quinoa',
-            }
-            HIGH_PROTEIN_SIGNALS = {'high-protein', 'high protein', 'protein-packed',
-                                    'protein packed'}
-            has_hp_signal = any(s in text for s in HIGH_PROTEIN_SIGNALS)
-            has_protein_ing = any(re.search(rf'\b{re.escape(p)}\b', text)
-                                  for p in HIGH_PROTEIN_INGREDIENTS)
-            try:
-                nutrients  = scraper.nutrients() or {}
-                prot_str   = nutrients.get('proteinContent', '')
-                prot_g     = float(re.search(r'[\d.]+', prot_str).group()) if prot_str else None
-                if prot_g is not None and prot_g >= 20:
-                    tags.append('high-protein')
-                elif has_hp_signal or has_protein_ing:
-                    tags.append('high-protein')
-            except Exception:
-                if has_hp_signal or has_protein_ing:
-                    tags.append('high-protein')
-
-            # Halal
-            HARAM_INGREDIENTS = {
-                'pork', 'bacon', 'ham', 'lard', 'prosciutto', 'pepperoni',
-                'salami', 'sausage', 'chorizo', 'gelatin', 'beer', 'wine',
-                'alcohol', 'liqueur', 'rum', 'vodka', 'whiskey', 'brandy',
-                'sake', 'mirin', 'cooking wine',
-            }
-            HALAL_SIGNALS = {'halal'}
-            has_halal_signal = any(s in text for s in HALAL_SIGNALS)
-            has_haram = any(re.search(rf'\b{re.escape(h)}\b', text) for h in HARAM_INGREDIENTS)
-            if has_halal_signal or not has_haram:
-                tags.append('halal')
-            
-            # Kosher -- simplified
-            TREIF_INGREDIENTS = {
-                'pork', 'bacon', 'ham', 'lard', 'prosciutto', 'pepperoni',
-                'salami', 'chorizo', 'shrimp', 'crab', 'lobster', 'clam',
-                'oyster', 'mussel', 'scallop', 'squid', 'calamari', 'octopus',
-                'rabbit', 'catfish', 'eel',
-            }
-            # Cannot mix meat and dairy
-            MEAT_WORDS  = {'chicken', 'beef', 'lamb', 'turkey', 'meat', 'steak',
-                           'veal', 'brisket', 'ground beef', 'ground turkey'}
-            DAIRY_WORDS = {'milk', 'cheese', 'butter', 'cream', 'yogurt', 'yoghurt',
-                           'whey', 'sour cream', 'half and half'}
-            KOSHER_SIGNALS = {'kosher'}
-            has_kosher_signal = any(s in text for s in KOSHER_SIGNALS)
-            has_treif    = any(re.search(rf'\b{re.escape(t)}\b', text) for t in TREIF_INGREDIENTS)
-            has_meat_and_dairy = (
-                any(re.search(rf'\b{re.escape(m)}\b', text) for m in MEAT_WORDS) and
-                any(re.search(rf'\b{re.escape(d)}\b', text) for d in DAIRY_WORDS)
-            )
-            if has_kosher_signal or (not has_treif and not has_meat_and_dairy):
-                tags.append('kosher')
-
-            # Hindu-Friendly
-            BEEF_SOURCES = {
-                'beef', 'steak', 'brisket', 'veal', 'ground beef', 'ribeye',
-                'sirloin', 'chuck', 'short rib', 'oxtail', 'beef broth',
-                'beef stock', 'beef bouillon', 'suet', 'lard',
-            }
-            HINDU_SIGNALS = {'hindu'}
-            has_hindu_signal = any(s in text for s in HINDU_SIGNALS)
-            has_beef = any(re.search(rf'\b{re.escape(b)}\b', text) for b in BEEF_SOURCES)
-            if has_hindu_signal or not has_beef:
-                tags.append('hindu-friendly')
-
-            # Buddhist - typically no meat and sometimes no alliums
-            ALLIUMS = {'garlic', 'onion', 'onions', 'leek', 'leeks', 'shallot',
-                       'shallots', 'chive', 'chives', 'scallion', 'scallions',
-                       'spring onion'}
-            MEAT_SOURCES = {
-                'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck', 'veal',
-                'bacon', 'ham', 'sausage', 'fish', 'shrimp', 'crab', 'lobster',
-            }
-            BUDDHIST_SIGNALS = {'buddhist'}
-            has_buddhist_signal = any(s in text for s in BUDDHIST_SIGNALS)
-            has_meat_b  = any(re.search(rf'\b{re.escape(m)}\b', text) for m in MEAT_SOURCES)
-            has_alliums = any(re.search(rf'\b{re.escape(a)}\b', text) for a in ALLIUMS)
-            if has_buddhist_signal or (not has_meat_b and not has_alliums):
-                tags.append('buddhist-friendly')
-
-            # Low-Sodium
-            HIGH_SODIUM_INGREDIENTS = {
-                'soy sauce', 'salt', 'table salt', 'kosher salt', 'sea salt',
-                'fish sauce', 'oyster sauce', 'worcestershire', 'anchovies',
-                'capers', 'olives', 'pickles', 'miso', 'tamari',
-                'canned tomatoes', 'canned beans', 'stock', 'broth', 'bouillon',
-                'deli meat', 'bacon', 'ham', 'sausage', 'salami', 'pepperoni',
-            }
-            LOW_SODIUM_SIGNALS = {'low-sodium', 'low sodium', 'no salt', 'unsalted',
-                                   'reduced sodium', 'sodium-free', 'sodium free'}
-            has_lsod_signal = any(s in text for s in LOW_SODIUM_SIGNALS)
-            has_high_sodium = any(re.search(rf'\b{re.escape(h)}\b', text)
-                                  for h in HIGH_SODIUM_INGREDIENTS)
-            try:
-                nutrients = scraper.nutrients() or {}
-                sod_str   = nutrients.get('sodiumContent', '')
-                sod_mg    = float(re.search(r'[\d.]+', sod_str).group()) if sod_str else None
-                if sod_mg is not None and sod_mg <= 600:
-                    tags.append('low-sodium')
-                elif has_lsod_signal or not has_high_sodium:
-                    tags.append('low-sodium')
-            except Exception:
-                if has_lsod_signal or not has_high_sodium:
-                    tags.append('low-sodium')
-            
-            # Paleo
-            PALEO_DISQUALIFIERS = {
-                'sugar', 'brown sugar', 'white sugar', 'cane sugar', 'powdered sugar',
-                'caster sugar', 'corn syrup', 'high fructose', 'artificial sweetener',
-                'splenda', 'aspartame', 'sucralose',
-                # grains
-                'wheat', 'flour', 'bread', 'pasta', 'rice', 'oat', 'oats', 'oatmeal',
-                'barley', 'rye', 'corn', 'cornmeal', 'cornstarch', 'couscous',
-                'quinoa', 'granola', 'cereal', 'cracker', 'tortilla', 'breadcrumbs',
-                # legumes
-                'beans', 'lentils', 'chickpeas', 'peanut', 'peanuts', 'peanut butter',
-                'soy', 'tofu', 'tempeh', 'edamame', 'miso', 'soy sauce', 'tamari',
-                # dairy
-                'milk', 'cheese', 'butter', 'cream', 'yogurt', 'yoghurt',
-                'whey', 'casein', 'ghee', 'kefir', 'sour cream', 'ice cream',
-                # processed / industrial
-                'canola oil', 'vegetable oil', 'soybean oil', 'corn oil',
-                'margarine', 'shortening', 'msg', 'maltodextrin',
-            }
-            PALEO_SIGNALS = {'paleo', 'paleolithic', 'primal'}
-            has_paleo_signal = any(s in text for s in PALEO_SIGNALS)
-            has_paleo_disq   = any(
-                re.search(rf'\b{re.escape(p)}\b', text) for p in PALEO_DISQUALIFIERS
-            )
-            if has_paleo_signal or not has_paleo_disq:
+            if 'dairy-free' in text or 'dairy free' in text:
+                tags.append('dairy-free')
+            if any(w in text for w in ['keto', 'low-carb', 'low carb']):
+                tags.append('keto')
+            if 'paleo' in text:
                 tags.append('paleo')
         except Exception:
             pass
         return tags
 
     def _is_vegan(self, ingredients: List[str]) -> bool:
-        NON_VEGAN = {
-            # Meat
-            'meat', 'chicken', 'beef', 'pork', 'ham', 'bacon', 'sausage',
-            'turkey', 'lamb', 'duck', 'veal', 'goat', 'rabbit', 'venison',
-            'salami', 'pepperoni', 'prosciutto',
-            # Seafood
-            'fish', 'anchovy', 'anchovies', 'shrimp', 'prawn', 'prawns',
-            'crab', 'lobster', 'shellfish', 'salmon', 'tuna', 'cod',
-            'sardine', 'sardines', 'mussel', 'mussels', 'clam', 'clams',
-            'oyster', 'oysters', 'scallop', 'scallops', 'squid', 'octopus',
-            # Dairy
-            'milk', 'cheese', 'butter', 'cream', 'ghee', 'whey', 'casein',
-            'lactose', 'lactalbumin', 'kefir', 'buttermilk', 'custard',
-            'yogurt', 'yoghurt',
-            # Eggs
-            'egg', 'eggs', 'albumin', 'albumen', 'mayonnaise', 'meringue',
-            # Animal-derived additives
-            'honey', 'gelatin', 'lard', 'suet', 'tallow', 'rennet',
-            'isinglass', 'carmine', 'cochineal', 'shellac', 'collagen',
-            'lanolin',
-        }
+        non_vegan = {'meat','chicken','beef','pork','fish','egg','milk','cheese',
+                     'butter','cream','honey','bacon','sausage','turkey','lamb',
+                     'yogurt','gelatin'}
         text = ' '.join(ingredients).lower()
-        return not any(re.search(rf'\b{re.escape(w)}\b', text) for w in NON_VEGAN)
+        return not any(item in text for item in non_vegan)
 
     def _is_vegetarian(self, ingredients: List[str]) -> bool:
-        NON_VEG = {
-            # Meat
-            'meat', 'chicken', 'beef', 'pork', 'ham', 'bacon', 'sausage',
-            'turkey', 'lamb', 'duck', 'veal', 'goat', 'rabbit', 'venison',
-            'bison', 'quail', 'goose', 'salami', 'pepperoni', 'prosciutto',
-            # Seafood
-            'fish', 'salmon', 'tuna', 'cod', 'tilapia', 'sardine', 'sardines',
-            'herring', 'mackerel', 'anchovy', 'anchovies', 'shrimp', 'prawn',
-            'prawns', 'crab', 'lobster', 'squid', 'octopus', 'scallop', 'scallops',
-            'clam', 'clams', 'oyster', 'oysters', 'mussel', 'mussels',
-            # Animal-derived
-            'lard', 'suet', 'tallow', 'gelatin', 'rennet', 'isinglass',
-            'carmine', 'cochineal', 'dashi',
-        }
+        non_veg = {'meat','chicken','beef','pork','fish','bacon','sausage',
+                   'turkey','lamb','anchovy','shrimp','crab','lobster','clam','oyster'}
         text = ' '.join(ingredients).lower()
-        return not any(re.search(rf'\b{re.escape(w)}\b', text) for w in NON_VEG)
-
-    def _is_pescatarian(self, ingredients: List[str]) -> bool:
-        LAND_MEAT = {
-            'chicken', 'beef', 'pork', 'bacon', 'ham', 'sausage', 'lamb',
-            'turkey', 'duck', 'veal', 'lard', 'suet', 'meat', 'gelatin',
-            'chorizo', 'salami', 'pepperoni', 'prosciutto', 'brisket',
-        }
-        text = ' '.join(ingredients).lower()
-        return not any(re.search(rf'\b{re.escape(m)}\b', text) for m in LAND_MEAT)
+        return not any(item in text for item in non_veg)
 
     def scrape_multiple(self, urls: List[str], delay: float = 1.0) -> List[Dict]:
         recipes = []
         total = len(urls)
-        print(f"\nScraping {total} recipe(s)...")
+        print(f"\n📥 Scraping {total} recipe(s)...")
         for i, url in enumerate(urls, 1):
             print(f"  [{i}/{total}] {url}")
             recipe = self.scrape_recipe(url)
@@ -831,14 +479,14 @@ class RecipeSearchScraper:
 
     def save_to_db(self, recipes: List[Dict]) -> int:
         if not recipes:
-            print("No recipes to save!")
+            print("⚠️  No recipes to save!")
             return 0
         inserted = 0
         for recipe in recipes:
             if save_recipe(self.supabase, recipe):
                 inserted += 1
         skipped = len(recipes) - inserted
-        print(f"\nSaved {inserted} new recipe(s) to Supabase"
+        print(f"\n💾 Saved {inserted} new recipe(s) to Supabase"
               + (f"  ({skipped} duplicate(s) skipped)" if skipped else ""))
         return inserted
 
@@ -854,11 +502,11 @@ class RecipeSearchScraper:
             query, num_results=num_results, sites=sites, max_workers=max_workers,
         )
         if not urls:
-            print("No recipe URLs found!")
+            print("⚠️  No recipe URLs found!")
             return 0
         recipes = self.scrape_multiple(urls, delay=scrape_delay)
         if not recipes:
-            print("No recipes successfully scraped!")
+            print("⚠️  No recipes successfully scraped!")
             return 0
         saved = self.save_to_db(recipes)
         log_search(self.supabase, query, sites, saved)
@@ -871,7 +519,7 @@ class RecipeSearchScraper:
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("RECIPE SEARCH & SCRAPER  (Supabase edition)")
+    print("🍳 RECIPE SEARCH & SCRAPER  (Supabase edition)")
     print("=" * 60)
 
     scraper = RecipeSearchScraper()
@@ -905,7 +553,7 @@ if __name__ == "__main__":
 
             print("\nSearch scope:  [1] All sites (default)   [2] Specific sites")
             scope = input("Choice [1/2]: ").strip() or "1"
-            sites = load_recipe_sites()
+            sites = None
             if scope == "2":
                 raw = input("Sites (comma-separated, e.g. allrecipes.com,food.com): ").strip()
                 sites = [s.strip() for s in raw.split(",") if s.strip()] or None
@@ -933,7 +581,7 @@ if __name__ == "__main__":
                 scrape_delay=scrape_delay,
             )
             if saved:
-                print(f"\nDone!  {saved} recipe(s) saved.")
+                print(f"\n✅  Done!  {saved} recipe(s) saved.")
 
         else:
             print("  Unrecognised choice — please enter 1, 2, 3, or q.")
