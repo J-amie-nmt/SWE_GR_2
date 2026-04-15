@@ -15,7 +15,7 @@ interface RecipeSummary {
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
-const PAGE_SIZE = 80
+const PAGE_SIZE = 21
 
 export default function RecipesPage() {
   const [text, setText] = useState('')

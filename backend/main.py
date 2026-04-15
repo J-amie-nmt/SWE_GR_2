@@ -26,9 +26,9 @@ def get_db() -> Client:
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-# --- GET /api/recipes?q=pasta&limit=20&offset=0 ---
+# --- GET /api/recipes?q=pasta&limit=21&offset=0 ---
 @app.get("/api/recipes")
-def search_recipes(q: str = "", limit: int = 20, offset: int = 0):
+def search_recipes(q: str = "", limit: int = 21, offset: int = 0):
     db = get_db()
 
     query = db.table("Recipes").select(
