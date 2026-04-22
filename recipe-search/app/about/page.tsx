@@ -89,9 +89,9 @@ export default function RequestPage() {
         Suggest a cuisine, ingredient, or dish and we'll scrape new recipes for it on our next update. You can submit up to 3 requests per week.
       </p>
 
-      {status === 'loading...' && (
-        <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>Loading...</p>
-      )}
+      {status === 'loading' && (
+       <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>Loading...</p>
+	)}
 
       {status === 'unauthenticated' && (
         <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>
