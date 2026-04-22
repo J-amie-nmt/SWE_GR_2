@@ -2,6 +2,7 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import os, re
+from datetime import datetime, timedelta, timezone
 from scraper_v2 import RecipeSearchScraper
 from pydantic import BaseModel
 from typing import Literal
@@ -28,17 +29,15 @@ def get_db() -> Client:
 
 
 def sanitize(value: str) -> str:
-    """Strip characters that could break Supabase ilike patterns."""
     return re.sub(r"[%_\\]", "", value.strip())[:100]
 
 
-# --- GET /api/recipes ---
 @app.get("/api/recipes")
 def search_recipes(
     q: str = "",
     cuisine: str = "",
     diet: str = "",
-    max_time: int | None = None,   # minutes — requires int column in DB
+    max_time: int | None = None,
     sort: Literal["newest", "title", "time"] = "newest",
     limit: int = Query(default=21, le=100),
     offset: int = Query(default=0, ge=0),
@@ -50,7 +49,6 @@ def search_recipes(
         count="exact"
     )
 
-    # Full-text keyword search across title + ingredients + tags
     if q:
         safe_q = sanitize(q)
         query = query.or_(
@@ -60,30 +58,23 @@ def search_recipes(
             f"cuisine.ilike.%{safe_q}%"
         )
 
-    # Discrete filter: cuisine (e.g. "Italian")
     if cuisine:
         query = query.ilike("cuisine", f"%{sanitize(cuisine)}%")
 
-    # Discrete filter: dietary tag (e.g. "vegan", "gluten-free")
     if diet:
         query = query.ilike("dietary_tags", f"%{sanitize(diet)}%")
 
-    # Numeric filter: max cook time in minutes
-    # Requires a `total_time_minutes` integer column in your Recipes table.
-    # If you only have a text column right now, skip this or cast in a DB view.
     if max_time is not None:
         query = query.lte("total_time_minutes", max_time)
 
-    # Sorting
     if sort == "title":
         query = query.order("title", desc=False)
     elif sort == "time":
         query = query.order("total_time_minutes", desc=False, nullsfirst=False)
-    else:  # newest (default)
+    else:
         query = query.order("id", desc=True)
 
     query = query.range(offset, offset + limit - 1)
-
     res = query.execute()
 
     return {
@@ -94,12 +85,9 @@ def search_recipes(
     }
 
 
-# --- GET /api/recipes/filters ---
-# Powers dropdown menus on the frontend with real values from your DB.
 @app.get("/api/recipes/filters")
 def get_filter_options():
     db = get_db()
-
     rows = db.table("Recipes").select("cuisine, dietary_tags").execute().data
 
     cuisines: set[str] = set()
@@ -120,11 +108,9 @@ def get_filter_options():
     }
 
 
-# --- GET /api/recipes/:id ---
 @app.get("/api/recipes/{recipe_id}")
 def get_recipe(recipe_id: int):
     db = get_db()
-
     rows = db.table("Recipes").select("*").eq("id", recipe_id).execute().data
 
     if not rows:
@@ -136,8 +122,6 @@ def get_recipe(recipe_id: int):
 
     return r
 
-
-# ---- everything below unchanged ----
 
 class SaveRecipeBody(BaseModel):
     user_email: str
@@ -178,6 +162,58 @@ def unsave_recipe_for_user(body: SaveRecipeBody):
     db = get_db()
     db.table("saved_recipes").delete().eq("user_email", body.user_email).eq("recipe_id", body.recipe_id).execute()
     return {"status": "removed"}
+
+
+class ScrapeRequestBody(BaseModel):
+    query: str
+    submitted_by: str
+
+
+@app.get("/api/scrape-requests")
+def get_scrape_requests(email: str):
+    db = get_db()
+    rows = db.table("scrape_requests") \
+        .select("*") \
+        .eq("submitted_by", email) \
+        .order("created_at", desc=True) \
+        .execute().data
+    return rows
+
+
+@app.post("/api/scrape-requests")
+def create_scrape_request(body: ScrapeRequestBody):
+    db = get_db()
+
+    total = db.table("scrape_requests") \
+        .select("id", count="exact") \
+        .execute().count or 0
+
+    if total >= 50:
+        raise HTTPException(
+            status_code=429,
+            detail="The request queue is full right now. Check back soon!"
+        )
+
+    week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+    recent = db.table("scrape_requests") \
+        .select("id", count="exact") \
+        .eq("submitted_by", body.submitted_by) \
+        .gte("created_at", week_ago) \
+        .execute().count or 0
+
+    if recent >= 3:
+        raise HTTPException(
+            status_code=429,
+            detail="You've reached the 3 requests per week limit. Try again next week!"
+        )
+
+    db.table("scrape_requests").insert({
+        "query": body.query.strip()[:200],
+        "submitted_by": body.submitted_by,
+        "status": "pending",
+    }).execute()
+
+    return {"status": "queued"}
 
 
 def run_scrape(query: str, num_results: int):

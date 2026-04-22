@@ -1,5 +1,6 @@
 /*Theme page*/
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=Fraunces:ital,wght@0,400;0,700;1,400&display=swap');
+
+
 
 :root {
   --bg: #2b0a0a;
@@ -38,7 +39,7 @@ html {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: 'Sora', sans-serif;
+  font-family: 'Georgia', sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;

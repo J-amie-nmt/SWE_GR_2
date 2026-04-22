@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 
 interface RecipeSummary {
@@ -12,6 +12,11 @@ interface RecipeSummary {
   cuisine: string
   dietary_tags: string
   calories: string
+}
+
+interface FilterOptions {
+  cuisines: string[]
+  diets: string[]
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
@@ -27,23 +32,44 @@ export default function RecipesPage() {
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
 
-  const fetchRecipes = async (query: string, pageNum: number) => {
+  // Filter state
+  const [cuisine, setCuisine] = useState('')
+  const [diet, setDiet] = useState('')
+  const [maxTime, setMaxTime] = useState<number | null>(null)
+  const [sort, setSort] = useState<'newest' | 'title' | 'time'>('newest')
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({ cuisines: [], diets: [] })
+
+  // Fetch filter options on mount
+  useEffect(() => {
+    fetch(`${API_BASE}/api/recipes/filters`)
+      .then(r => r.json())
+      .then(setFilterOptions)
+      .catch(console.error)
+  }, [])
+
+  const fetchRecipes = useCallback(async (query: string, pageNum: number) => {
     setLoading(true)
     setError(null)
 
     const offset = (pageNum - 1) * PAGE_SIZE
 
     try {
-      const url = `${API_BASE}/api/recipes?q=${encodeURIComponent(query)}&limit=${PAGE_SIZE}&offset=${offset}`
-      const res = await fetch(url)
+      const params = new URLSearchParams({
+        q: query,
+        limit: String(PAGE_SIZE),
+        offset: String(offset),
+        sort,
+      })
+      if (cuisine) params.set('cuisine', cuisine)
+      if (diet) params.set('diet', diet)
+      if (maxTime) params.set('max_time', String(maxTime))
 
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`)
-      }
+      const res = await fetch(`${API_BASE}/api/recipes?${params}`)
+
+      if (!res.ok) throw new Error(`Server error ${res.status}`)
 
       const data = await res.json()
 
-      // Supports both {results, total} OR plain array fallback
       if (Array.isArray(data)) {
         setResults(data)
         setTotal(data.length)
@@ -51,19 +77,17 @@ export default function RecipesPage() {
         setResults(data.results || [])
         setTotal(data.total || 0)
       }
-
     } catch (err) {
       console.error(err)
-      setError("Something went wrong. Please try again.")
+      setError("Something went wrong please try again.")
     } finally {
       setLoading(false)
     }
-  }
+  }, [cuisine, diet, maxTime, sort])
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!text.trim()) return
-
     setSearched(true)
     setPage(1)
     fetchRecipes(text.trim(), 1)
@@ -73,6 +97,14 @@ export default function RecipesPage() {
     setPage(newPage)
     fetchRecipes(text.trim(), newPage)
   }
+
+  // Re-run search when filters change (only if a search has already been made)
+  useEffect(() => {
+    if (searched && text.trim()) {
+      setPage(1)
+      fetchRecipes(text.trim(), 1)
+    }
+  }, [cuisine, diet, maxTime, sort])
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -86,7 +118,7 @@ export default function RecipesPage() {
         Search by ingredients, cuisine type, dietary preferences, and more!
       </p>
 
-      <form onSubmit={handleSearch} style={{ display: "flex", maxWidth: 560, marginBottom: 48 }}>
+      <form onSubmit={handleSearch} style={{ display: "flex", maxWidth: 560, marginBottom: 16 }}>
         <input
           type="text"
           value={text}
@@ -98,6 +130,48 @@ export default function RecipesPage() {
           {loading ? "Searching..." : "Search"}
         </button>
       </form>
+
+      {/* Filter controls */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 40, maxWidth: 560 }}>
+        <select
+          value={cuisine}
+          onChange={e => setCuisine(e.target.value)}
+        >
+          <option value="">All cuisines</option>
+          {filterOptions.cuisines.map(c => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+
+        <select
+          value={diet}
+          onChange={e => setDiet(e.target.value)}
+        >
+          <option value="">All diets</option>
+          {filterOptions.diets.map(d => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+
+        <select
+          value={maxTime ?? ''}
+          onChange={e => setMaxTime(e.target.value ? Number(e.target.value) : null)}
+        >
+          <option value="">Any time</option>
+          <option value="15">Under 15 min</option>
+          <option value="30">Under 30 min</option>
+          <option value="60">Under 1 hour</option>
+        </select>
+
+        <select
+          value={sort}
+          onChange={e => setSort(e.target.value as typeof sort)}
+        >
+          <option value="newest">Newest</option>
+          <option value="title">A–Z</option>
+          <option value="time">Quickest</option>
+        </select>
+      </div>
 
       <hr className="divider" style={{ marginBottom: 48 }} />
 
@@ -114,7 +188,7 @@ export default function RecipesPage() {
       {!loading && results.length > 0 && (
         <>
           <p style={{ fontSize: "0.85rem", color: "var(--ink-muted)", marginBottom: 20 }}>
-            Page {page} of {totalPages || 1}
+            Page {page} of {totalPages || 1} &mdash; {total} results
           </p>
 
           <div style={{
@@ -164,7 +238,6 @@ export default function RecipesPage() {
             ))}
           </div>
 
-          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div style={{
               marginTop: 32,

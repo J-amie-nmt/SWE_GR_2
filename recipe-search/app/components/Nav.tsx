@@ -21,7 +21,7 @@ export default function Nav() {
   <Link href="/" className="nav-pill">Home</Link>
   <Link href="/search" className="nav-pill">Search Recipes</Link>
   <Link href="/saved" className="nav-pill">Saved Recipes</Link>
-  <Link href="/about" className="nav-pill">About</Link>
+  <Link href="/about" className="nav-pill">Submit New Recipe</Link>
   <Link href="/login" className="nav-pill nav-pill--accent" style={{ marginLeft: "auto", flexShrink: 0 }}>Login</Link>
 </nav>
   )
