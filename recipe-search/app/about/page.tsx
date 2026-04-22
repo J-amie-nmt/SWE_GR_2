@@ -86,7 +86,7 @@ export default function RequestPage() {
         Request Recipes
       </h1>
       <p style={{ marginBottom: 40, fontSize: "0.95rem", maxWidth: 500 }}>
-        Suggest a cuisine, ingredient, or dish and we'll scrape new recipes for it on our next update. You can submit up to 3 requests per week.
+        Suggest a keyword for our scraper to add to our database next week. Logged in users can submit up to 3 times in a week.
       </p>
 
       {status === 'loading' && (
@@ -95,7 +95,7 @@ export default function RequestPage() {
 
       {status === 'unauthenticated' && (
         <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>
-          Please <a href="/login" style={{ color: "var(--accent)" }}>sign in</a> to submit recipe requests.
+          <a href="/login" style={{ color: "var(--accent)" }}>Sign in</a> to submit a recipe request.
         </p>
       )}
 
