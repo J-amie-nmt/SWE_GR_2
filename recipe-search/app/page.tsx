@@ -1,9 +1,6 @@
-// app/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-
-
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,44 +8,34 @@ const supabase = createClient(
 )
 
 const SITE_NAME = "Dr.Dan's Cookbook"
-
 const HERO = {
-  tagline: "Find recipes based on basic searches",
-  description: "If you have ever found yourself trying to find something to do with a random assortment of ingredients this website is for you. Using our webscraper we compiled a various recipe catalog that you can search with a wide variety of filters.",
+  tagline: "Find and save recipes from across the web",
+  description: "If you have ever found yourself trying to find something to do with a random assortment of ingredients this website is for you. Using our webscraper we created a evergrowing recipe database from popular recipes from across the web.",
   ctaText: "Search Recipes Quickly",
   ctaLink: "/search",
-}
-
-const ABOUT = {
-  heading: "About This Website",
-  paragraphs: [
-    "This website was made by a group of software engineers who were trying to make a website that will store various recipe types while allowing users to search for them based on certain qualities of the dish. This website was created in Next.js and the front end devs designed and stylized most of the features. If you would like to find out more about the developers we have an about page link at the top of the website :)",
-    "Our future plans for the website include pushing it to be hosted by vercel. When hosted by vercel we plan to create a flask server that will run our database interpreter and our webscraper that pulls recipes. We also plan to move our database to supabase.",
-  ],
 }
 
 export default function Home() {
   const [recipeCount, setRecipeCount] = useState<number | null>(null)
   const [scrapeCount, setScrapeCount] = useState<number | null>(null)
 
-useEffect(() => {
-  fetch('/api/stats')
-    .then(res => res.json())
-    .then(({ recipeCount, scrapeCount }) => {
-      setRecipeCount(recipeCount)
-      setScrapeCount(scrapeCount)
-    })
-}, [])
+  useEffect(() => {
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(({ recipeCount, scrapeCount }) => {
+        setRecipeCount(recipeCount)
+        setScrapeCount(scrapeCount)
+      })
+  }, [])
 
   const STATS = [
-    { number: recipeCount ?? '...', label: "Recipes in the catalog" },
+    { number: recipeCount ?? '...', label: "Recipes in the database" },
     { number: 120,                  label: "Recipe sites scraped" },
-    { number: scrapeCount ?? '...', label: "Number of scrapes run" },
+    { number: scrapeCount ?? '...', label: "Scrapes Ran" },
   ]
 
   return (
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
-
       {/* HERO */}
       <section className="fade-up" style={{
         maxWidth: 700, margin: "0 auto",
@@ -73,35 +60,12 @@ useEffect(() => {
 
       <hr className="divider" style={{ maxWidth: 880, margin: "0 auto" }} />
 
-      {/* ABOUT */}
-      <section style={{
-        maxWidth: 880, margin: "0 auto",
-        padding: "80px 32px",
-        display: "grid",
-        gridTemplateColumns: "180px 1fr",
-        gap: 64,
-      }}>
-        <div className="section-label" style={{ paddingTop: 4 }}>About</div>
-        <div>
-          <h2 style={{
-            fontFamily: "'Fraunces', serif",
-            fontSize: "1.8rem", fontWeight: 400,
-            letterSpacing: "-0.3px", marginBottom: 20,
-            color: "var(--ink)",
-          }}>
-            {ABOUT.heading}
-          </h2>
-          {ABOUT.paragraphs.map((p, i) => (
-            <p key={i} style={{ marginBottom: 14, fontSize: "0.93rem" }}>{p}</p>
-          ))}
-        </div>
-      </section>
-
       {/* STATS */}
       <div style={{
         maxWidth: 880, margin: "0 auto",
         padding: "0 32px 80px",
-        display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
         gap: 1, background: "var(--border)",
         border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden",
       }}>
@@ -118,7 +82,6 @@ useEffect(() => {
           </div>
         ))}
       </div>
-
     </div>
   )
 }

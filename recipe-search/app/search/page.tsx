@@ -50,9 +50,8 @@ export default function RecipesPage() {
   const fetchRecipes = useCallback(async (query: string, pageNum: number) => {
     setLoading(true)
     setError(null)
-
+    
     const offset = (pageNum - 1) * PAGE_SIZE
-
     try {
       const params = new URLSearchParams({
         q: query,
@@ -63,13 +62,10 @@ export default function RecipesPage() {
       if (cuisine) params.set('cuisine', cuisine)
       if (diet) params.set('diet', diet)
       if (maxTime) params.set('max_time', String(maxTime))
-
+      
       const res = await fetch(`${API_BASE}/api/recipes?${params}`)
-
       if (!res.ok) throw new Error(`Server error ${res.status}`)
-
       const data = await res.json()
-
       if (Array.isArray(data)) {
         setResults(data)
         setTotal(data.length)
@@ -115,7 +111,7 @@ export default function RecipesPage() {
         Recipe Search
       </h1>
       <p style={{ marginBottom: 40, fontSize: "0.95rem", maxWidth: 500 }}>
-        Search by ingredients, cuisine type, dietary preferences, and more!
+        Search by cuisine type, time to cook, dietary preferences, and more.
       </p>
 
       <form onSubmit={handleSearch} style={{ display: "flex", maxWidth: 560, marginBottom: 16 }}>

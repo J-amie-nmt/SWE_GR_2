@@ -32,7 +32,6 @@ export default function RootLayout({
             color: "var(--ink-muted)",
             background: "var(--bg)",
           }}>
-            {new Date().getFullYear()} Dr.Dans Cookbook
           </footer>
         </Providers>
         <Analytics />

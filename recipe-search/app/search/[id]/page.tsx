@@ -134,15 +134,20 @@ export default function RecipeDetailPage() {
         </Link>
 
         {session && (
-          <button
-            onClick={handleSave}
-            disabled={saveLoading}
-            className="btn btn-outline"
-            style={{ fontSize: "0.85rem", padding: "6px 14px" }}
-          >
-            {saveLoading ? "..." : saved ? "♥ Saved" : "♡ Save Recipe"}
-          </button>
+  <button
+      onClick={handleSave}
+        disabled={saveLoading}
+        className="btn btn-outline"
+        style={{ fontSize: "0.85rem", padding: "6px 14px", display: "flex", alignItems: "center", gap: 6 }}
+        >
+        {saveLoading ? "..." : (
+        <>
+            <img src="/shinface" alt="" width={16} height={16} />
+            {saved ? "Saved" : "Save Recipe"}
+        </>
         )}
+    </button>
+)}
       </div>
 
       {recipe.image_url && (

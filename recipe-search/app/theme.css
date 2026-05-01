@@ -1,16 +1,13 @@
 /*Theme page*/
-
-
-
 :root {
   --bg: #2b0a0a;
-  /* maroon background */
+  /* maroon/red background */
   --bg-raised: #3a1010;
-  /* slightly lighter maroon for cards */
+  /* slightly lighter maroon for recipe cards */
   --bg-card: #4a1818;
   /* card surface */
   --border: #6b2020;
-  /* subtle maroon border */
+  /* lighter maroon border */
   --ink: #e8f5a3;
   /* lime green — primary text */
   --ink-muted: #a8b86a;

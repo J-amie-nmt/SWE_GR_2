@@ -13,7 +13,7 @@ export default function LoginPage() {
       <span className="section-label">Account</span>
       <h1 style={{ fontSize: "2rem", marginBottom: 8, marginTop: 8 }}>Sign in</h1>
       <p style={{ marginBottom: 40, fontSize: "0.9rem" }}>
-        Log in to save recipes and access your personal cookbook.
+        Login to save recipes that you search.
       </p>
 
       {session ? (
