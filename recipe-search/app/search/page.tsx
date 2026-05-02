@@ -1,3 +1,5 @@
+//app/search/page.tsx
+//search page of website where users can search through tags or input text
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
@@ -39,7 +41,7 @@ export default function RecipesPage() {
   const [sort, setSort] = useState<'newest' | 'title' | 'time'>('newest')
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ cuisines: [], diets: [] })
 
-  // Fetch filter options on mount
+  // Fetch filter options upon mount
   useEffect(() => {
     fetch(`${API_BASE}/api/recipes/filters`)
       .then(r => r.json())
@@ -127,7 +129,6 @@ export default function RecipesPage() {
         </button>
       </form>
 
-      {/* Filter controls */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 40, maxWidth: 560 }}>
         <select
           value={cuisine}

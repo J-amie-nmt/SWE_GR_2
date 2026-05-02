@@ -1,4 +1,5 @@
-//login page
+//app/login/page.tsx
+//login page using next-auth to allow google SSO for users
 'use client'
 
 import Image from "next/image"

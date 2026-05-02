@@ -1,3 +1,5 @@
+//app/page.tsx
+//main page of website with hero and dynamic stats from database
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'

@@ -1,4 +1,5 @@
 // app/search/[id]/page.tsx
+//creates subpages for each recipe 
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'

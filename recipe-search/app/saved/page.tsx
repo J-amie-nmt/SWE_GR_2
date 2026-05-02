@@ -1,3 +1,4 @@
+//app/saved/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
@@ -30,7 +31,7 @@ export default function SavedPage() {
       .catch(() => setLoading(false))
   }, [session, status])
 
-  // Not logged in
+  // Not currently logged in
   if (status !== 'loading' && !session) return (
     <div className="page-content fade-up">
       <span className="section-label">Your Cookbook</span>
@@ -49,8 +50,7 @@ export default function SavedPage() {
       <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", marginTop: 8, marginBottom: 32 }}>
         Saved Recipes
       </h1>
-
-      {/* Loading skeletons */}
+      //load skeletons
       {loading && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
           {[1,2,3,4,5,6].map(i => (
@@ -62,8 +62,6 @@ export default function SavedPage() {
           ))}
         </div>
       )}
-
-      {/* Empty state */}
       {!loading && recipes.length === 0 && (
         <p style={{ color: "var(--ink-muted)" }}>
           No saved recipes yet —{' '}
@@ -72,8 +70,7 @@ export default function SavedPage() {
           </Link>.
         </p>
       )}
-
-      {/* Recipe grid */}
+        //recipe grid
       {!loading && recipes.length > 0 && (
         <>
           <p style={{ fontSize: "0.85rem", color: "var(--ink-muted)", marginBottom: 20 }}>

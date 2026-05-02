@@ -1,3 +1,5 @@
+//app/about/page.tsx <- used to be about page but was changed. Is currently a recipe query submission page
+//Allows users to submit new recipes to be scraped and added to our database later
 'use client'
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
@@ -30,7 +32,6 @@ export default function RequestPage() {
       if (!res.ok) throw new Error()
       setHistory(await res.json())
     } catch {
-      // non-critical
     } finally {
       setHistoryLoading(false)
     }
@@ -78,7 +79,6 @@ export default function RequestPage() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleSubmit(e as unknown as React.FormEvent)
   }
-
   return (
     <div className="page-content fade-up">
       <span className="section-label">Community</span>
